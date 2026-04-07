@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeHelp — Платформа задач</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface2: #f4f4f0;
+  --border: #e8e8e2;
+  --border2: #d4d4cc;
+  --text: #1a1a18;
+  --text2: #6b6b62;
+  --text3: #9e9e94;
+  --accent: #1a1a18;
+  --green: #2d7a4f;
+  --green-bg: #f0faf4;
+  --red: #c0392b;
+  --red-bg: #fdf2f0;
+  --yellow: #b07d1a;
+  --yellow-bg: #fdfaf0;
+  --blue: #1a4f7a;
+  --blue-bg: #f0f6fd;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; }
+a { text-decoration: none; color: inherit; }
+button { font-family: var(--sans); cursor: pointer; }
+input, textarea, select { font-family: var(--sans); }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0; height: 52px;
+  padding: 0 24px;
+}
+.nav-logo {
+  font-family: var(--mono); font-weight: 500; font-size: 15px;
+  letter-spacing: -0.02em; margin-right: 32px; color: var(--text);
+}
+.nav-logo span { color: var(--text3); }
+.nav-links { display: flex; gap: 2px; flex: 1; }
+.nav-link {
+  padding: 6px 12px; border-radius: var(--radius); font-size: 13px;
+  color: var(--text2); background: none; border: none; cursor: pointer;
+  transition: all 0.15s;
+}
+.nav-link:hover { background: var(--surface2); color: var(--text); }
+.nav-link.active { background: var(--text); color: #fff; }
+.nav-right { display: flex; gap: 8px; align-items: center; }
+.nav-user { font-size: 13px; color: var(--text2); }
+.btn { 
+  padding: 7px 16px; border-radius: var(--radius); font-size: 13px; 
+  border: 1px solid var(--border2); background: var(--surface); color: var(--text);
+  cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn:hover { background: var(--surface2); border-color: var(--border2); }
+.btn-primary { background: var(--text); color: #fff; border-color: var(--text); }
+.btn-primary:hover { background: #333; border-color: #333; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-ghost { border-color: transparent; background: transparent; }
+.btn-ghost:hover { background: var(--surface2); border-color: transparent; }
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── PROBLEMS LIST ── */
+.page-header {
+  padding: 32px 32px 0;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.page-title { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
+.page-subtitle { font-size: 13px; color: var(--text3); margin-top: 2px; }
+.filters {
+  padding: 0 32px 16px;
+  display: flex; gap: 8px; align-items: center;
+}
+.filter-chip {
+  padding: 5px 12px; border-radius: 99px; font-size: 12px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text2);
+  cursor: pointer; transition: all 0.15s;
+}
+.filter-chip:hover, .filter-chip.active { background: var(--text); color: #fff; border-color: var(--text); }
+.search-box {
+  margin-left: auto;
+  padding: 6px 12px; border-radius: var(--radius); font-size: 13px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  outline: none; width: 200px;
+}
+.search-box:focus { border-color: var(--border2); }
+.problems-table { padding: 0 32px 32px; }
+.table-wrap {
+  border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden;
+  background: var(--surface);
+}
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--surface2); }
+th {
+  padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 500;
+  color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface2); }
+.diff-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 500;
+}
+.diff-easy { background: var(--green-bg); color: var(--green); }
+.diff-medium { background: var(--yellow-bg); color: var(--yellow); }
+.diff-hard { background: var(--red-bg); color: var(--red); }
+.status-dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--border2); vertical-align: middle;
+}
+.status-dot.accepted { background: var(--green); }
+.prob-link { color: var(--text); font-weight: 500; cursor: pointer; }
+.prob-link:hover { color: var(--blue); }
+.cat-tag {
+  display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px;
+  background: var(--surface2); color: var(--text3);
+}
+
+/* ── PROBLEM SOLVER ── */
+.solver-layout {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  height: calc(100vh - 52px);
+}
+.solver-left {
+  border-right: 1px solid var(--border); overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+.solver-right { display: flex; flex-direction: column; overflow: hidden; }
+.solver-tabs {
+  display: flex; border-bottom: 1px solid var(--border);
+  background: var(--surface); padding: 0 16px;
+}
+.solver-tab {
+  padding: 10px 14px; font-size: 13px; color: var(--text2); border: none; background: none;
+  cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s;
+}
+.solver-tab.active { color: var(--text); border-bottom-color: var(--text); }
+.solver-content { padding: 24px; flex: 1; }
+.prob-title { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px; }
+.prob-meta { display: flex; gap: 8px; margin-bottom: 20px; align-items: center; }
+.prob-desc { font-size: 13px; line-height: 1.7; color: var(--text2); }
+.prob-desc p { margin-bottom: 12px; }
+.example-block {
+  background: var(--surface2); border-radius: var(--radius); padding: 12px 16px;
+  margin: 12px 0; font-family: var(--mono); font-size: 12px; line-height: 1.6;
+}
+.example-label { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+
+/* editor */
+.editor-toolbar {
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+  border-bottom: 1px solid var(--border); background: var(--surface);
+}
+.lang-select {
+  padding: 4px 10px; border: 1px solid var(--border); border-radius: var(--radius);
+  font-family: var(--mono); font-size: 12px; background: var(--surface); color: var(--text);
+  outline: none;
+}
+.editor-area {
+  flex: 1; font-family: var(--mono); font-size: 13px; line-height: 1.6;
+  padding: 16px; border: none; resize: none; background: var(--bg); color: var(--text);
+  outline: none; tab-size: 2;
+}
+.editor-area::selection { background: #d4e4f7; }
+.output-panel {
+  border-top: 1px solid var(--border); background: var(--surface);
+  display: flex; flex-direction: column; max-height: 220px;
+}
+.output-header {
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+  border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 500;
+}
+.output-body {
+  flex: 1; overflow-y: auto; padding: 12px 16px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.7; color: var(--text2);
+}
+.verdict { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+.verdict.accepted { color: var(--green); }
+.verdict.wrong { color: var(--red); }
+.verdict.pending { color: var(--text3); }
+.verdict.error { color: var(--red); }
+.submit-bar {
+  display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border);
+  background: var(--surface); align-items: center;
+}
+.submit-bar .info { flex: 1; font-size: 12px; color: var(--text3); }
+
+/* ── FORUM ── */
+.forum-layout { display: grid; grid-template-columns: 1fr 300px; gap: 0; padding: 32px; gap: 24px; max-width: 1100px; margin: 0 auto; }
+.post-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px 20px; margin-bottom: 12px; transition: border-color 0.15s; cursor: pointer;
+}
+.post-card:hover { border-color: var(--border2); }
+.post-card-title { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+.post-card-meta { display: flex; gap: 12px; font-size: 12px; color: var(--text3); align-items: center; }
+.post-card-preview { font-size: 13px; color: var(--text2); margin: 8px 0; line-height: 1.5; }
+.like-btn { display: flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 12px; color: var(--text2); transition: all 0.15s; }
+.like-btn:hover, .like-btn.liked { background: var(--red-bg); color: var(--red); border-color: #f5c6c2; }
+.forum-sidebar-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 16px; }
+.forum-sidebar-title { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 12px; }
+.new-post-form { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
+.form-input {
+  width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: 13px; background: var(--surface); color: var(--text); outline: none; font-family: var(--sans);
+}
+.form-input:focus { border-color: var(--border2); }
+textarea.form-input { resize: vertical; min-height: 80px; line-height: 1.6; }
+.post-detail { display: none; }
+.post-detail.active { display: block; }
+.comment-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.comment-item:last-child { border-bottom: none; }
+.comment-author { font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+.comment-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.comment-replies { margin-left: 20px; padding-left: 16px; border-left: 2px solid var(--border); margin-top: 8px; }
+
+/* ── AUTH ── */
+.auth-page { min-height: calc(100vh - 52px); display: flex; align-items: center; justify-content: center; padding: 32px; }
+.auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; width: 360px; }
+.auth-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.auth-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
+.auth-switch { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text3); }
+.auth-switch a { color: var(--text); font-weight: 500; cursor: pointer; text-decoration: underline; }
+
+/* ── PROFILE ── */
+.profile-page { max-width: 900px; margin: 0 auto; padding: 32px; }
+.profile-header {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 24px; display: flex; gap: 20px; align-items: center; margin-bottom: 24px;
+}
+.avatar {
+  width: 64px; height: 64px; border-radius: 50%; background: var(--text);
+  display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 500;
+  color: #fff; flex-shrink: 0; font-family: var(--mono);
+}
+.profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px 20px;
+}
+.stat-value { font-size: 28px; font-weight: 600; font-family: var(--mono); letter-spacing: -0.03em; }
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.submissions-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+
+/* ── TOAST ── */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  background: var(--text); color: #fff; padding: 10px 16px; border-radius: var(--radius);
+  font-size: 13px; max-width: 280px; animation: slideIn 0.2s ease;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.success { background: var(--green); }
+.toast.error { background: var(--red); }
+@keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ── LOADING ── */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid currentColor; border-top-color: transparent;
+  border-radius: 50%; animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-row td { text-align: center; padding: 40px; color: var(--text3); }
+
+/* ── EMPTY ── */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
+.empty-state-icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state-text { font-size: 14px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">code<span>Help</span></div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="goPage('problems')">Задачи</button>
+    <button class="nav-link" onclick="goPage('forum')">Форум</button>
+    <button class="nav-link" id="nav-profile-btn" onclick="goPage('profile')" style="display:none">Профиль</button>
+  </div>
+  <div class="nav-right">
+    <span class="nav-user" id="nav-username"></span>
+    <button class="btn btn-sm" id="nav-auth-btn" onclick="goPage('auth')">Войти</button>
+    <button class="btn btn-sm" id="nav-logout-btn" style="display:none" onclick="logout()">Выйти</button>
+  </div>
+</nav>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ════════════════════ PROBLEMS PAGE ════════════════════ -->
+<div class="page active" id="page-problems">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Задачи</div>
+      <div class="page-subtitle" id="problems-count">Загрузка...</div>
+    </div>
+  </div>
+  <div class="filters">
+    <button class="filter-chip active" onclick="filterDiff(this,'')">Все</button>
+    <button class="filter-chip" onclick="filterDiff(this,'Easy')">Easy</button>
+    <button class="filter-chip" onclick="filterDiff(this,'Medium')">Medium</button>
+    <button class="filter-chip" onclick="filterDiff(this,'Hard')">Hard</button>
+    <input class="search-box" id="searchInput" placeholder="Поиск задачи..." oninput="renderProblems()">
+  </div>
+  <div class="problems-table">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:32px">#</th>
+            <th>Название</th>
+            <th>Сложность</th>
+            <th>Категория</th>
+            <th>Решений</th>
+          </tr>
+        </thead>
+        <tbody id="problems-tbody">
+          <tr class="loading-row"><td colspan="5"><span class="spinner"></span> Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SOLVER PAGE ════════════════════ -->
+<div class="page" id="page-solver">
+  <div class="solver-layout">
+    <div class="solver-left">
+      <div class="solver-tabs">
+        <button class="solver-tab active" onclick="solverTab(this,'desc')">Описание</button>
+        <button class="solver-tab" onclick="solverTab(this,'submissions')">Мои сабмиты</button>
+      </div>
+      <div id="solver-desc" class="solver-content">
+        <div class="prob-title" id="sp-title">—</div>
+        <div class="prob-meta">
+          <span class="diff-badge" id="sp-diff">—</span>
+          <span class="cat-tag" id="sp-cat">—</span>
+        </div>
+        <div class="prob-desc" id="sp-desc"></div>
+      </div>
+      <div id="solver-submissions" class="solver-content" style="display:none">
+        <div style="font-size:13px;font-weight:500;margin-bottom:16px">История сабмитов</div>
+        <div id="sp-subs-list"><div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">Нет сабмитов</div></div></div>
+      </div>
+    </div>
+    <div class="solver-right">
+      <div class="editor-toolbar">
+        <select class="lang-select" id="lang-select">
+          <option value="python">Python</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+        </select>
+        <div style="flex:1"></div>
+        <button class="btn btn-sm btn-ghost" onclick="resetCode()">Сброс</button>
+      </div>
+      <textarea class="editor-area" id="code-editor" spellcheck="false" onkeydown="handleTab(event)"></textarea>
+      <div class="output-panel">
+        <div class="output-header">
+          <span>Результат</span>
+          <span id="output-status"></span>
+        </div>
+        <div class="output-body" id="output-body">
+          <span style="color:var(--text3)">Нажми «Отправить» чтобы проверить решение</span>
+        </div>
+      </div>
+      <div class="submit-bar">
+        <div class="info" id="submit-info">Авторизуйтесь чтобы отправить решение</div>
+        <button class="btn" onclick="goPage('problems')">← Назад</button>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitCode()">
+          <span id="submit-spinner" style="display:none" class="spinner"></span>
+          Отправить
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ FORUM PAGE ════════════════════ -->
+<div class="page" id="page-forum">
+  <div class="forum-layout">
+    <div>
+      <div id="forum-new-post-area"></div>
+      <div id="forum-posts-list"></div>
+      <div class="post-detail" id="post-detail">
+        <button class="btn btn-sm btn-ghost" style="margin-bottom:16px" onclick="closePost()">← Назад</button>
+        <div class="post-card" style="cursor:default">
+          <div class="post-card-title" id="pd-title" style="font-size:18px"></div>
+          <div class="post-card-meta" id="pd-meta" style="margin-top:8px"></div>
+          <div id="pd-content" style="font-size:14px;line-height:1.7;margin-top:16px;color:var(--text2)"></div>
+        </div>
+        <div style="margin-top:16px;font-size:13px;font-weight:500;margin-bottom:10px">Комментарии</div>
+        <div id="pd-comments"></div>
+        <div id="pd-comment-form" style="margin-top:16px"></div>
+      </div>
+    </div>
+    <div>
+      <div class="forum-sidebar-card">
+        <div class="forum-sidebar-title">Статистика форума</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--text2)">Постов</span>
+            <span style="font-family:var(--mono);font-weight:500" id="stat-posts">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--text2)">Комментариев</span>
+            <span style="font-family:var(--mono);font-weight:500" id="stat-comments">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="forum-sidebar-card">
+        <div class="forum-sidebar-title">Категории</div>
+        <div id="sidebar-cats" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ AUTH PAGE ════════════════════ -->
+<div class="page" id="page-auth">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-title" id="auth-title">Войти</div>
+      <div class="auth-sub" id="auth-sub">Войдите в свой аккаунт</div>
+      <div id="auth-form-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ PROFILE PAGE ════════════════════ -->
+<div class="page" id="page-profile">
+  <div class="profile-page">
+    <div class="profile-header">
+      <div class="avatar" id="prof-avatar">U</div>
+      <div>
+        <div style="font-size:18px;font-weight:600" id="prof-name">—</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:2px" id="prof-email">—</div>
+      </div>
+    </div>
+    <div class="profile-stats">
+      <div class="stat-card">
+        <div class="stat-value" id="prof-total">0</div>
+        <div class="stat-label">Всего сабмитов</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--green)" id="prof-accepted">0</div>
+        <div class="stat-label">Принято</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="prof-problems">0</div>
+        <div class="stat-label">Задач решено</div>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin-bottom:12px">Последние сабмиты</div>
+    <div class="submissions-list">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:var(--surface2)">
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Задача</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Статус</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Язык</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Дата</th>
+          </tr>
+        </thead>
+        <tbody id="prof-subs-tbody">
+          <tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text3)">Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+const BASE = localStorage.getItem('apiBase') || 'http://localhost:8000/api';
+let token = localStorage.getItem('token') || '';
+let refreshToken = localStorage.getItem('refreshToken') || '';
+let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+let currentProblem = null;
+let allProblems = [];
+let allCategories = [];
+let currentDiffFilter = '';
+let allPosts = [];
+let currentPost = null;
+
+// ═══════════════════════════════════════════════════════
+//  API
+// ═══════════════════════════════════════════════════════
+async function api(method, path, body, retry = true) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  let res = await fetch(BASE + path, opts);
+  if (res.status === 401 && retry && refreshToken) {
+    const r2 = await fetch(BASE + '/login/refresh/', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh: refreshToken })
+    });
+    if (r2.ok) {
+      const d = await r2.json();
+      token = d.access; localStorage.setItem('token', token);
+      return api(method, path, body, false);
+    } else { logout(); return null; }
+  }
+  if (!res.ok) {
+    let err; try { err = await res.json(); } catch { err = { detail: res.statusText }; }
+    throw err;
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+const get = (p) => api('GET', p);
+const post = (p, b) => api('POST', p, b);
+const put = (p, b) => api('PUT', p, b);
+const del = (p) => api('DELETE', p);
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+function toast(msg, type = '') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const map = { problems: 0, forum: 1, profile: 2, auth: -1, solver: -1 };
+  const idx = map[name];
+  if (idx >= 0) document.querySelectorAll('.nav-link')[idx].classList.add('active');
+  if (name === 'problems') loadProblems();
+  if (name === 'forum') loadForum();
+  if (name === 'profile') loadProfile();
+  if (name === 'auth') renderAuthForm();
+}
+
+// ═══════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════
+function renderAuthForm(mode = 'login') {
+  document.getElementById('auth-title').textContent = mode === 'login' ? 'Войти' : 'Регистрация';
+  document.getElementById('auth-sub').textContent = mode === 'login' ? 'Войдите в свой аккаунт' : 'Создайте аккаунт';
+  const c = document.getElementById('auth-form-container');
+  if (mode === 'login') {
+    c.innerHTML = `
+      <div class="form-group"><label class="form-label">Логин</label><input class="form-input" id="a-username" placeholder="username"></div>
+      <div class="form-group"><label class="form-label">Пароль</label><input class="form-input" id="a-password" type="password" placeholder="••••••••"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doLogin()">Войти</button>
+      <div class="auth-switch">Нет аккаунта? <a onclick="renderAuthForm('register')">Зарегистрироваться</a></div>`;
+  } else {
+    c.innerHTML = `
+      <div class="form-group"><label class="form-label">Логин</label><input class="form-input" id="a-username" placeholder="username"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="a-email" type="email" placeholder="email@example.com"></div>
+      <div class="form-group"><label class="form-label">Пароль</label><input class="form-input" id="a-password" type="password" placeholder="••••••••"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doRegister()">Зарегистрироваться</button>
+      <div class="auth-switch">Уже есть аккаунт? <a onclick="renderAuthForm('login')">Войти</a></div>`;
+  }
+}
+async function doLogin() {
+  const u = document.getElementById('a-username').value;
+  const p = document.getElementById('a-password').value;
+  try {
+    const d = await post('/login/', { username: u, password: p });
+    token = d.access; refreshToken = d.refresh;
+    localStorage.setItem('token', token);
+    localStorage.setItem('refreshToken', refreshToken);
+    currentUser = { username: u };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    updateNavAuth();
+    toast('Добро пожаловать, ' + u + '!', 'success');
+    goPage('problems');
+  } catch (e) {
+    toast('Ошибка: ' + (e.detail || JSON.stringify(e)), 'error');
+  }
+}
+async function doRegister() {
+  const u = document.getElementById('a-username').value;
+  const em = document.getElementById('a-email').value;
+  const p = document.getElementById('a-password').value;
+  try {
+    await post('/register/', { username: u, email: em, password: p });
+    toast('Аккаунт создан! Войдите.', 'success');
+    renderAuthForm('login');
+  } catch (e) {
+    toast('Ошибка: ' + (e.username || e.password || JSON.stringify(e)), 'error');
+  }
+}
+function logout() {
+  token = ''; refreshToken = ''; currentUser = null;
+  localStorage.removeItem('token'); localStorage.removeItem('refreshToken'); localStorage.removeItem('currentUser');
+  updateNavAuth();
+  toast('Вы вышли из аккаунта');
+  goPage('problems');
+}
+function updateNavAuth() {
+  const loggedIn = !!currentUser;
+  document.getElementById('nav-auth-btn').style.display = loggedIn ? 'none' : '';
+  document.getElementById('nav-logout-btn').style.display = loggedIn ? '' : 'none';
+  document.getElementById('nav-profile-btn').style.display = loggedIn ? '' : 'none';
+  document.getElementById('nav-username').textContent = loggedIn ? currentUser.username : '';
+}
+
+// ═══════════════════════════════════════════════════════
+//  PROBLEMS
+// ═══════════════════════════════════════════════════════
+async function loadProblems() {
+  try {
+    const [probs, cats] = await Promise.all([get('/problems/'), get('/categories/')]);
+    allProblems = probs.results || probs;
+    allCategories = cats.results || cats;
+    document.getElementById('problems-count').textContent = allProblems.length + ' задач';
+    renderProblems();
+    renderCatSidebar();
+  } catch (e) {
+    document.getElementById('problems-tbody').innerHTML = `<tr class="loading-row"><td colspan="5" style="color:var(--red)">Ошибка подключения к API. Проверьте что сервер запущен на ${BASE}</td></tr>`;
+    document.getElementById('problems-count').textContent = 'Ошибка загрузки';
+  }
+}
+function filterDiff(el, diff) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentDiffFilter = diff;
+  renderProblems();
+}
+function renderProblems() {
+  const q = (document.getElementById('searchInput').value || '').toLowerCase();
+  let probs = allProblems;
+  if (currentDiffFilter) probs = probs.filter(p => p.difficulty === currentDiffFilter);
+  if (q) probs = probs.filter(p => p.title.toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q));
+  const tb = document.getElementById('problems-tbody');
+  if (!probs.length) { tb.innerHTML = `<tr class="loading-row"><td colspan="5">Задачи не найдены</td></tr>`; return; }
+  tb.innerHTML = probs.map((p, i) => `
+    <tr>
+      <td style="color:var(--text3);font-family:var(--mono);font-size:12px">${p.id}</td>
+      <td><span class="prob-link" onclick="openProblem(${p.id})">${p.title}</span></td>
+      <td><span class="diff-badge diff-${(p.difficulty||'').toLowerCase()}">${p.difficulty || '—'}</span></td>
+      <td><span class="cat-tag">${p.category_name || '—'}</span></td>
+      <td style="color:var(--text3);font-family:var(--mono);font-size:12px">${p.submissions_count || '—'}</td>
+    </tr>`).join('');
+}
+function renderCatSidebar() {
+  const el = document.getElementById('sidebar-cats');
+  if (!el) return;
+  el.innerHTML = allCategories.slice(0, 8).map(c => `
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+      <span style="color:var(--text2)">${c.name}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${allProblems.filter(p => p.category === c.id).length}</span>
+    </div>`).join('');
+}
+
+const DEFAULT_CODE = {
+  python: '# Ваше решение\nimport sys\ninput = sys.stdin.readline\n\ndef solve():\n    pass\n\nsolve()\n',
+  cpp: '#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    \n    // Ваше решение\n    \n    return 0;\n}\n',
+  java: 'import java.util.*;\nimport java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        // Ваше решение\n    }\n}\n'
+};
+async function openProblem(id) {
+  goPage('solver');
+  document.getElementById('sp-title').textContent = 'Загрузка...';
+  document.getElementById('sp-desc').innerHTML = '';
+  document.getElementById('output-body').innerHTML = '<span style="color:var(--text3)">Нажми «Отправить» чтобы проверить решение</span>';
+  document.getElementById('output-status').textContent = '';
+  try {
+    const p = await get('/problems/' + id + '/');
+    currentProblem = p;
+    document.getElementById('sp-title').textContent = p.title;
+    const diff = document.getElementById('sp-diff');
+    diff.textContent = p.difficulty;
+    diff.className = 'diff-badge diff-' + (p.difficulty || '').toLowerCase();
+    document.getElementById('sp-cat').textContent = p.category_name || '—';
+    let html = `<p>${p.description.replace(/\n/g, '</p><p>')}</p>`;
+    if (p.input_example) html += `<div class="example-label">Ввод</div><div class="example-block">${p.input_example}</div>`;
+    if (p.output_example) html += `<div class="example-label">Вывод</div><div class="example-block">${p.output_example}</div>`;
+    document.getElementById('sp-desc').innerHTML = html;
+    const lang = document.getElementById('lang-select').value;
+    document.getElementById('code-editor').value = DEFAULT_CODE[lang];
+    document.getElementById('submit-info').textContent = currentUser ? ('Задача #' + p.id) : 'Авторизуйтесь чтобы отправить решение';
+  } catch (e) {
+    document.getElementById('sp-title').textContent = 'Ошибка загрузки задачи';
+  }
+}
+function solverTab(btn, tab) {
+  document.querySelectorAll('.solver-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('solver-desc').style.display = tab === 'desc' ? '' : 'none';
+  document.getElementById('solver-submissions').style.display = tab === 'submissions' ? '' : 'none';
+  if (tab === 'submissions') loadMySubmissions();
+}
+async function loadMySubmissions() {
+  if (!currentUser) { document.getElementById('sp-subs-list').innerHTML = '<div class="empty-state"><div class="empty-state-text">Нужна авторизация</div></div>'; return; }
+  try {
+    const subs = await get('/submissions/');
+    const list = (subs.results || subs).filter(s => s.problem === currentProblem?.id);
+    if (!list.length) { document.getElementById('sp-subs-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">Нет сабмитов по этой задаче</div></div>'; return; }
+    document.getElementById('sp-subs-list').innerHTML = list.map(s => `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center">
+        <span style="font-size:12px;color:var(--text3);font-family:var(--mono)">#${s.id}</span>
+        <span class="diff-badge ${statusBadgeClass(s.status)}" style="font-size:11px">${s.status}</span>
+        <span style="font-size:12px;color:var(--text3)">${s.language}</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:auto">${new Date(s.created_at).toLocaleDateString('ru')}</span>
+      </div>`).join('');
+  } catch (e) { document.getElementById('sp-subs-list').innerHTML = '<div style="color:var(--red);font-size:13px">Ошибка загрузки</div>'; }
+}
+function statusBadgeClass(s) {
+  if (s === 'Accepted') return 'diff-easy';
+  if (s === 'Wrong Answer') return 'diff-hard';
+  if (s === 'Pending') return 'diff-medium';
+  return 'diff-hard';
+}
+function handleTab(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const el = e.target, s = el.selectionStart, end = el.selectionEnd;
+    el.value = el.value.substring(0, s) + '  ' + el.value.substring(end);
+    el.selectionStart = el.selectionEnd = s + 2;
+  }
+}
+function resetCode() {
+  const lang = document.getElementById('lang-select').value;
+  document.getElementById('code-editor').value = DEFAULT_CODE[lang];
+}
+document.getElementById('lang-select').onchange = function() {
+  document.getElementById('code-editor').value = DEFAULT_CODE[this.value];
+};
+async function submitCode() {
+  if (!currentUser) { toast('Нужна авторизация', 'error'); goPage('auth'); return; }
+  if (!currentProblem) return;
+  const code = document.getElementById('code-editor').value.trim();
+  if (!code) { toast('Напишите код', 'error'); return; }
+  const lang = document.getElementById('lang-select').value;
+  const btn = document.getElementById('submit-btn');
+  const sp = document.getElementById('submit-spinner');
+  btn.disabled = true; sp.style.display = 'inline-block';
+  document.getElementById('output-body').innerHTML = '<span style="color:var(--text3)"><span class="spinner"></span> Проверяем решение...</span>';
+  document.getElementById('output-status').textContent = '';
+  try {
+    const res = await post('/submissions/', { problem: currentProblem.id, code, language: lang });
+    renderVerdict(res);
+  } catch (e) {
+    document.getElementById('output-body').innerHTML = `<div class="verdict error">✗ Ошибка отправки</div><div style="font-size:12px;color:var(--text2)">${JSON.stringify(e)}</div>`;
+  }
+  btn.disabled = false; sp.style.display = 'none';
+}
+function renderVerdict(sub) {
+  const statusIcons = { 'Accepted': '✓', 'Wrong Answer': '✗', 'Runtime Error': '⚠', 'Time Limit Exceeded': '⏱', 'Pending': '…' };
+  const statusClasses = { 'Accepted': 'accepted', 'Wrong Answer': 'wrong', 'Runtime Error': 'error', 'Pending': 'pending' };
+  const icon = statusIcons[sub.status] || '?';
+  const cls = statusClasses[sub.status] || 'wrong';
+  const details = sub.status_details || '';
+  document.getElementById('output-body').innerHTML = `
+    <div class="verdict ${cls}">${icon} ${sub.status}</div>
+    ${details ? `<div style="font-size:12px;color:var(--text2);white-space:pre-wrap;margin-top:8px">${details}</div>` : ''}
+    <div style="font-size:11px;color:var(--text3);margin-top:10px">Сабмит #${sub.id} · ${sub.language}</div>`;
+  const statusEl = document.getElementById('output-status');
+  statusEl.innerHTML = `<span style="font-size:12px;padding:2px 8px;border-radius:99px;${sub.status==='Accepted'?'background:var(--green-bg);color:var(--green)':'background:var(--red-bg);color:var(--red)'}">${sub.status}</span>`;
+  if (sub.status === 'Accepted') toast('Задача решена!', 'success');
+}
+
+// ═══════════════════════════════════════════════════════
+//  FORUM
+// ═══════════════════════════════════════════════════════
+async function loadForum() {
+  try {
+    const [posts, comments, cats] = await Promise.all([get('/posts/'), get('/comments/'), get('/categories/')]);
+    allPosts = posts.results || posts;
+    const allComs = comments.results || comments;
+    document.getElementById('stat-posts').textContent = allPosts.length;
+    document.getElementById('stat-comments').textContent = allComs.length;
+    const sc = document.getElementById('sidebar-cats');
+    if (sc) {
+      const cats2 = cats.results || cats;
+      sc.innerHTML = cats2.slice(0, 6).map(c => `
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+          <span style="color:var(--text2)">${c.name}</span>
+        </div>`).join('');
+    }
+    renderForumPosts();
+    renderNewPostForm();
+  } catch (e) {
+    document.getElementById('forum-posts-list').innerHTML = `<div style="color:var(--red);padding:20px;font-size:13px">Ошибка подключения к API</div>`;
+  }
+}
+function renderNewPostForm() {
+  const el = document.getElementById('forum-new-post-area');
+  if (!currentUser) { el.innerHTML = `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:16px;font-size:13px;color:var(--text3)">Войдите чтобы создать пост → <button class="btn btn-sm" onclick="goPage('auth')">Войти</button></div>`; return; }
+  el.innerHTML = `
+    <div class="new-post-form" id="npf">
+      <div style="font-size:13px;font-weight:500;margin-bottom:14px">Новый пост</div>
+      <div class="form-group"><label class="form-label">Заголовок</label><input class="form-input" id="np-title" placeholder="Тема поста..."></div>
+      <div class="form-group"><label class="form-label">Содержание</label><textarea class="form-input" id="np-content" placeholder="Напишите пост..." style="min-height:80px"></textarea></div>
+      <button class="btn btn-primary" onclick="createPost()">Опубликовать</button>
+    </div>`;
+}
+function renderForumPosts() {
+  const el = document.getElementById('forum-posts-list');
+  if (!allPosts.length) { el.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💬</div><div class="empty-state-text">Постов пока нет. Будьте первым!</div></div>'; return; }
+  el.innerHTML = allPosts.map(p => `
+    <div class="post-card" onclick="openPost(${p.id})">
+      <div class="post-card-title">${p.title}</div>
+      <div class="post-card-preview">${(p.content || '').slice(0, 120)}${p.content?.length > 120 ? '...' : ''}</div>
+      <div class="post-card-meta">
+        <span style="font-weight:500">${p.author_username || '—'}</span>
+        <span>${new Date(p.created_at).toLocaleDateString('ru')}</span>
+        <span style="margin-left:auto;display:flex;align-items:center;gap:6px">
+          <button class="like-btn ${p.liked ? 'liked' : ''}" onclick="event.stopPropagation();toggleLike(${p.id},this)">♥ ${p.likes_count || 0}</button>
+          <span>💬 ${p.comments_count || 0}</span>
+        </span>
+      </div>
+    </div>`).join('');
+}
+async function createPost() {
+  const title = document.getElementById('np-title').value.trim();
+  const content = document.getElementById('np-content').value.trim();
+  if (!title || !content) { toast('Заполните все поля', 'error'); return; }
+  try {
+    await post('/posts/', { title, content });
+    document.getElementById('np-title').value = '';
+    document.getElementById('np-content').value = '';
+    toast('Пост опубликован', 'success');
+    loadForum();
+  } catch (e) { toast('Ошибка: ' + JSON.stringify(e), 'error'); }
+}
+async function toggleLike(id, btn) {
+  if (!currentUser) { toast('Нужна авторизация', 'error'); return; }
+  try {
+    const r = await post('/posts/' + id + '/like/', {});
+    btn.textContent = '♥ ' + r.likes_count;
+    btn.classList.toggle('liked', r.liked);
+  } catch (e) { toast('Ошибка', 'error'); }
+}
+async function openPost(id) {
+  document.getElementById('forum-posts-list').style.display = 'none';
+  document.getElementById('forum-new-post-area').style.display = 'none';
+  const pd = document.getElementById('post-detail');
+  pd.classList.add('active');
+  try {
+    const p = await get('/posts/' + id + '/');
+    currentPost = p;
+    document.getElementById('pd-title').textContent = p.title;
+    document.getElementById('pd-meta').innerHTML = `<span style="font-weight:500">${p.author_username}</span><span>${new Date(p.created_at).toLocaleDateString('ru')}</span><span>♥ ${p.likes_count}</span>`;
+    document.getElementById('pd-content').textContent = p.content;
+    const coms = await get('/comments/?post=' + id + '&depth=2');
+    const list = (coms.results || coms).filter(c => c.post === id && !c.parent);
+    renderComments(list);
+    renderCommentForm(id);
+  } catch (e) { document.getElementById('pd-title').textContent = 'Ошибка загрузки'; }
+}
+function renderComments(comments) {
+  const el = document.getElementById('pd-comments');
+  if (!comments.length) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px 0">Комментариев пока нет</div>'; return; }
+  el.innerHTML = comments.map(c => renderComment(c)).join('');
+}
+function renderComment(c) {
+  const replies = (c.replies || []).map(r => `
+    <div class="comment-item">
+      <div class="comment-author">${r.author_username} <span style="font-weight:400;color:var(--text3)">${new Date(r.created_at).toLocaleDateString('ru')}</span></div>
+      <div class="comment-text">${r.text}</div>
+    </div>`).join('');
+  return `
+    <div class="comment-item">
+      <div class="comment-author">${c.author_username} <span style="font-weight:400;color:var(--text3)">${new Date(c.created_at).toLocaleDateString('ru')}</span>
+        ${currentUser ? `<button class="btn btn-sm btn-ghost" style="font-size:11px;padding:2px 8px;margin-left:8px" onclick="showReplyForm(${c.id})">Ответить</button>` : ''}
+      </div>
+      <div class="comment-text">${c.text}</div>
+      ${replies ? `<div class="comment-replies">${replies}</div>` : ''}
+      <div id="reply-form-${c.id}"></div>
+    </div>`;
+}
+function showReplyForm(parentId) {
+  const el = document.getElementById('reply-form-' + parentId);
+  el.innerHTML = `
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <input class="form-input" id="reply-text-${parentId}" placeholder="Ответить..." style="flex:1">
+      <button class="btn btn-primary btn-sm" onclick="sendReply(${parentId})">Ответить</button>
+    </div>`;
+}
+async function sendReply(parentId) {
+  const text = document.getElementById('reply-text-' + parentId).value.trim();
+  if (!text) return;
+  try {
+    await post('/comments/', { post: currentPost.id, text, parent: parentId });
+    toast('Ответ добавлен', 'success');
+    openPost(currentPost.id);
+  } catch (e) { toast('Ошибка', 'error'); }
+}
+function renderCommentForm(postId) {
+  const el = document.getElementById('pd-comment-form');
+  if (!currentUser) { el.innerHTML = '<div style="font-size:13px;color:var(--text3)">Войдите чтобы оставить комментарий</div>'; return; }
+  el.innerHTML = `
+    <div style="display:flex;gap:8px">
+      <textarea class="form-input" id="new-comment-text" placeholder="Ваш комментарий..." style="flex:1;min-height:60px;resize:none"></textarea>
+      <button class="btn btn-primary" onclick="sendComment(${postId})">Отправить</button>
+    </div>`;
+}
+async function sendComment(postId) {
+  const text = document.getElementById('new-comment-text').value.trim();
+  if (!text) return;
+  try {
+    await post('/comments/', { post: postId, text });
+    toast('Комментарий добавлен', 'success');
+    openPost(postId);
+  } catch (e) { toast('Ошибка', 'error'); }
+}
+function closePost() {
+  document.getElementById('post-detail').classList.remove('active');
+  document.getElementById('forum-posts-list').style.display = '';
+  document.getElementById('forum-new-post-area').style.display = '';
+  currentPost = null;
+}
+
+async function loadProfile() {
+  if (!currentUser) { goPage('auth'); return; }
+  document.getElementById('prof-name').textContent = currentUser.username;
+  document.getElementById('prof-email').textContent = currentUser.email || '—';
+  document.getElementById('prof-avatar').textContent = currentUser.username[0].toUpperCase();
+  try {
+    const subs = await get('/submissions/');
+    const list = subs.results || subs;
+    document.getElementById('prof-total').textContent = list.length;
+    const accepted = list.filter(s => s.status === 'Accepted');
+    document.getElementById('prof-accepted').textContent = accepted.length;
+    const uniqueProblems = new Set(accepted.map(s => s.problem)).size;
+    document.getElementById('prof-problems').textContent = uniqueProblems;
+    const tbody = document.getElementById('prof-subs-tbody');
+    if (!list.length) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text3)">Нет сабмитов</td></tr>`; return; }
+    tbody.innerHTML = list.slice(0, 20).map(s => `
+      <tr>
+        <td style="font-size:13px">${s.problem_title || ('Задача #' + s.problem)}</td>
+        <td><span class="diff-badge ${statusBadgeClass(s.status)}" style="font-size:11px">${s.status}</span></td>
+        <td style="font-size:12px;color:var(--text2)">${s.language}</td>
+        <td style="font-size:12px;color:var(--text3)">${new Date(s.created_at).toLocaleDateString('ru')}</td>
+      </tr>`).join('');
+  } catch (e) { document.getElementById('prof-subs-tbody').innerHTML = `<tr><td colspan="4" style="color:var(--red);padding:20px;text-align:center">Ошибка загрузки</td></tr>`; }
+}
+
+updateNavAuth();
+loadProblems();
+renderAuthForm();
+</script>
+</body>
+</html>
