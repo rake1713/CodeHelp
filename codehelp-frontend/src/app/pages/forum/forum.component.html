@@ -1,0 +1,206 @@
+<div class="forum-page">
+  <div class="forum-layout">
+    <div class="forum-main">
+      @if (!selectedPost) {
+        @if (!authService.isLoggedIn()) {
+          <div class="login-banner">
+            <span>Войдите чтобы создать пост →</span>
+            <a routerLink="/login" class="login-banner-btn">Войти</a>
+          </div>
+        } @else {
+          <div class="new-post-card">
+            <div class="new-post-title">Новый пост</div>
+
+            <div class="form-group">
+              <label>Заголовок</label>
+              <input [(ngModel)]="newPostTitle" type="text" placeholder="Тема поста..." />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Категория</label>
+
+              <div class="select-wrap">
+                <select class="category-select" [(ngModel)]="selectedPostCategory">
+                  <option value="">Выбери категорию</option>
+                  @for (category of categories; track category.id) {
+                    <option [value]="category.id">
+                      {{ category.name }}
+                    </option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Содержание</label>
+              <textarea [(ngModel)]="newPostContent" placeholder="Напишите пост..."></textarea>
+            </div>
+
+            <button class="primary-btn" (click)="createPost()">Опубликовать</button>
+          </div>
+        }
+
+        @if (loading) {
+          <div class="status-box">Загрузка форума...</div>
+        }
+
+        @if (errorMessage) {
+          <div class="status-box error">{{ errorMessage }}</div>
+        }
+
+        @if (!loading && filteredPosts.length === 0) {
+          <div class="status-box">Постов пока нет</div>
+        }
+
+        @if (!loading && filteredPosts.length > 0) {
+          <div class="posts-list">
+            @for (post of filteredPosts; track post.id) {
+              <div class="post-card" (click)="openPost(post)">
+                <div class="post-title">{{ post.title }}</div>
+
+                <div class="post-preview">
+                  {{ post.content }}
+                </div>
+
+                <div class="post-footer">
+                  <div class="post-meta">
+                    <span>{{ post.author_username || 'Unknown' }}</span>
+                    <span>{{ post.created_at | date:'dd.MM.yyyy' }}</span>
+                  </div>
+
+                  <div class="post-actions" (click)="$event.stopPropagation()">
+                    <button
+                      class="like-btn"
+                      [class.liked]="post.liked"
+                      (click)="likePost(post)"
+                    >
+                      ♥ {{ post.likes_count ?? 0 }}
+                    </button>
+
+                    
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      } @else {
+        <div class="post-detail-wrapper">
+          <button
+            type="button"
+            class="back-btn"
+            (click)="onBackClick($event)"
+          >
+            ← Назад
+          </button>
+          <div class="post-card detail">
+            <div class="post-title">{{ selectedPost.title }}</div>
+
+            <div class="post-footer">
+              <div class="post-meta">
+                <span>{{ selectedPost.author_username || 'Unknown' }}</span>
+                <span>{{ selectedPost.created_at | date:'dd.MM.yyyy' }}</span>
+              </div>
+
+              <div class="post-actions">
+                <button
+                  class="like-btn"
+                  [class.liked]="selectedPost.liked"
+                  (click)="likePost(selectedPost)"
+                >
+                  ♥ {{ selectedPost.likes_count ?? 0 }}
+                </button>
+              </div>
+            </div>
+
+            <div class="detail-content">
+              {{ selectedPost.content }}
+            </div>
+          </div>
+
+          <div class="comments-section">
+            <h3>Комментарии</h3>
+
+            @if (comments.length === 0) {
+              <div class="status-box">Комментариев пока нет</div>
+            } @else {
+              <div class="comments-list">
+                @for (comment of comments; track comment.id) {
+                  <div class="comment-card">
+                    <div class="comment-author">
+                      {{ comment.author_username || 'Unknown' }}
+                      <span>{{ comment.created_at | date:'dd.MM.yyyy' }}</span>
+                    </div>
+                    <div class="comment-text">{{ comment.text }}</div>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (authService.isLoggedIn()) {
+              <div class="comment-form">
+                <textarea
+                  [(ngModel)]="newCommentText"
+                  placeholder="Напишите комментарий..."
+                ></textarea>
+                <button class="primary-btn" (click)="sendComment()">Отправить</button>
+              </div>
+            } @else {
+              <div class="login-hint">
+                Войдите чтобы оставить комментарий
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="forum-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-title">СТАТИСТИКА ФОРУМА</div>
+
+        <div class="stat-row">
+          <span>Постов</span>
+          <strong>{{ posts.length }}</strong>
+        </div>
+
+        <div class="stat-row">
+          <span>Комментариев</span>
+          <strong>{{ commentsCount }}</strong>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">КАТЕГОРИИ</div>
+
+        <div class="categories-list">
+          <button
+            type="button"
+            class="category-item"
+            [class.active-category]="selectedCategory === ''"
+            (click)="clearCategoryFilter()"
+          >
+            Все
+          </button>
+
+          @for (category of categories; track category.id) {
+            <button
+              type="button"
+              class="category-item"
+              [class.active-category]="selectedCategory === category.name"
+              (click)="filterByCategory(category.name)"
+            >
+              {{ category.name }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (toastVisible) {
+    <div class="toast" [class.error-toast]="toastType === 'error'" [class.success-toast]="toastType === 'success'">
+      {{ toastMessage }}
+    </div>
+  }
+</div>

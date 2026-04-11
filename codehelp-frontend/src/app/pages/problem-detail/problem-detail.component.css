@@ -1,0 +1,284 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.problem-page {
+  display: grid;
+  grid-template-columns: 48% 52%;
+  height: calc(100vh - 72px);
+  width: 100%;
+  background: #ffffff;
+}
+
+.left-panel,
+.right-panel {
+  min-width: 0;
+  min-height: 0;
+  background: #ffffff;
+}
+
+.left-panel {
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+}
+
+.tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.active-tab {
+  font-size: 15px;
+  font-weight: 600;
+  border-bottom: 2px solid #111827;
+  padding-bottom: 8px;
+}
+
+.problem-content {
+  padding: 24px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 24px;
+  color: #4b5563;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.problem-back-link:hover {
+  color: #111827;
+}
+
+.problem-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 14px;
+}
+
+.tag-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tag.easy {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.problem-description {
+  font-size: 17px;
+  line-height: 1.7;
+  color: #374151;
+  margin-bottom: 24px;
+}
+
+.example-box {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.example-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.example-text {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 16px;
+  color: #111827;
+  white-space: pre-wrap;
+}
+
+.editor-topbar {
+  height: 52px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 14px;
+  border-bottom: 1px solid #2d2d30;
+  background: #252526;
+  color: #cccccc;
+}
+
+.language-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #3c3c3c;
+  font-size: 13px;
+  background: #1e1e1e;
+  color: #cccccc;
+  outline: none;
+}
+
+.reset-btn {
+  border: none;
+  background: transparent;
+  color: #cccccc;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  color: #ffffff;
+}
+.editor-wrapper {
+  flex: 1;
+  min-height: 0;
+  background: #1e1e1e;
+  overflow: hidden;
+}
+
+.monaco-editor {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.real-code-editor {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border: none;
+  outline: none;
+  resize: none;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.editor-loading {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d1d5db;
+  font-size: 15px;
+  background: #1e1e1e;
+}
+
+.result-panel {
+  height: 170px;
+  border-top: 1px solid #2d2d30;
+  background: #181818;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid #2d2d30;
+  color: #cccccc;
+  font-weight: 600;
+  font-size: 13px;
+  background: #252526;
+}
+
+.result-content {
+  flex: 1;
+  padding: 14px;
+  color: #d4d4d4;
+  font-family: Consolas, "Courier New", monospace;
+  white-space: pre-wrap;
+  overflow: auto;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.bottom-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  border-top: 1px solid #2d2d30;
+  background: #252526;
+}
+
+.status-text {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.secondary-btn,
+.primary-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary-btn {
+  background: #2d2d30;
+  color: #ffffff;
+}
+
+.primary-btn {
+  background: #0e639c;
+  color: #ffffff;
+}
+
+.primary-btn:hover {
+  background: #1177bb;
+}
+
+.secondary-btn:hover {
+  background: #3c3c3c;
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.state-box {
+  margin: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #f3f4f6;
+  font-size: 18px;
+}
+
+.state-box.error {
+  background: #fee2e2;
+  color: #991b1b;
+}

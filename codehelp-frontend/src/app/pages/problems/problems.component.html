@@ -1,0 +1,138 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Задачи</h1>
+    <p class="page-subtitle">{{ filteredProblems.length }} задач</p>
+  </div>
+</div>
+
+<div class="problems-layout">
+  <aside class="categories-sidebar">
+    <div class="categories-card">
+      <div class="categories-title">Категории</div>
+
+      <div
+        class="category-item"
+        [class.active]="selectedCategory === ''"
+        (click)="setCategory('')"
+      >
+        Все
+      </div>
+
+      @for (category of categories; track category) {
+        <div
+          class="category-item"
+          [class.active]="selectedCategory === category"
+          (click)="setCategory(category)"
+        >
+          {{ category }}
+        </div>
+      }
+    </div>
+  </aside>
+
+  <section class="problems-content">
+    <div class="top-controls">
+      <div class="left-controls">
+        <div class="filters">
+          <button
+            class="filter-chip"
+            [class.active]="selectedDifficulty === ''"
+            (click)="setDifficulty('')"
+          >
+            Все
+          </button>
+
+          <button
+            class="filter-chip"
+            [class.active]="selectedDifficulty === 'Easy'"
+            (click)="setDifficulty('Easy')"
+          >
+            Easy
+          </button>
+
+          <button
+            class="filter-chip"
+            [class.active]="selectedDifficulty === 'Medium'"
+            (click)="setDifficulty('Medium')"
+          >
+            Medium
+          </button>
+
+          <button
+            class="filter-chip"
+            [class.active]="selectedDifficulty === 'Hard'"
+            (click)="setDifficulty('Hard')"
+          >
+            Hard
+          </button>
+        </div>
+
+        <a routerLink="/my-submissions" class="submissions-btn">
+          My Submissions
+        </a>
+      </div>
+
+      <input
+        class="search-box"
+        type="text"
+        [(ngModel)]="searchText"
+        (input)="applyFilters()"
+        placeholder="Поиск задачи..."
+      />
+    </div>
+
+    @if (loading) {
+      <div class="info-box">Загрузка...</div>
+    }
+
+    @if (errorMessage) {
+      <div class="error-box">{{ errorMessage }}</div>
+    }
+
+    @if (!loading && !errorMessage) {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Название</th>
+              <th>Сложность</th>
+              <th>Категория</th>
+              <th>Решений</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredProblems.length === 0) {
+              <tr>
+                <td colspan="5" class="empty-cell">Задачи не найдены</td>
+              </tr>
+            } @else {
+              @for (problem of filteredProblems; track problem.id) {
+                <tr>
+                  <td>{{ problem.id }}</td>
+                  <td>
+                    <a class="problem-link" [routerLink]="['/problems', problem.id]">
+                      {{ problem.title }}
+                    </a>
+                  </td>
+                  <td>
+                    <span
+                      class="difficulty-badge"
+                      [class.easy]="problem.difficulty === 'Easy'"
+                      [class.medium]="problem.difficulty === 'Medium'"
+                      [class.hard]="problem.difficulty === 'Hard'"
+                    >
+                      {{ problem.difficulty }}
+                    </span>
+                  </td>
+                  <td>{{ problem.category_name || '—' }}</td>
+                  <td>{{ problem.submissions_count ?? '—' }}</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

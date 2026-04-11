@@ -1,0 +1,80 @@
+@if (loading) {
+  <div class="state-box">Загрузка задачи...</div>
+}
+
+@if (errorMessage) {
+  <div class="state-box error">{{ errorMessage }}</div>
+}
+
+@if (!loading && problem) {
+  <div class="problem-page">
+    <div class="left-panel">
+      <div class="tab-bar">
+        <span class="active-tab">Описание</span>
+      </div>
+
+      <div class="problem-content">
+        <a routerLink="/problems" class="back-link">← Назад к задачам</a>
+
+        <h1 class="problem-title">{{ problem.title }}</h1>
+
+        <div class="tag-row">
+          <span class="tag easy">{{ problem.difficulty }}</span>
+          <span class="tag">{{ problem.category_name }}</span>
+        </div>
+
+        <p class="problem-description">{{ problem.description }}</p>
+
+        <div class="example-box">
+          <div class="example-title">Ввод</div>
+          <div class="example-text">{{ problem.input_example }}</div>
+        </div>
+
+        <div class="example-box">
+          <div class="example-title">Вывод</div>
+          <div class="example-text">{{ problem.output_example }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="editor-topbar">
+        <select
+          class="language-select"
+          [(ngModel)]="selectedLanguage"
+          (change)="onLanguageChange()">
+          <option value="python">Python</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+        </select>
+
+        <button class="reset-btn" (click)="resetCode()">Сброс</button>
+      </div>
+
+      <div class="editor-wrapper">
+        <textarea
+          class="real-code-editor"
+          [(ngModel)]="code"
+          spellcheck="false">
+        </textarea>
+      </div>
+
+      <div class="result-panel">
+        <div class="result-header">Результат</div>
+        <div class="result-content">{{ outputText }}</div>
+      </div>
+
+      <div class="bottom-actions">
+        <span class="status-text">
+          {{ submitting ? 'Отправка...' : 'Готово к отправке' }}
+        </span>
+
+        <div class="button-group">
+          <button class="primary-btn" (click)="submitCode()" [disabled]="submitting">
+            {{ submitting ? 'Отправка...' : 'Отправить' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
