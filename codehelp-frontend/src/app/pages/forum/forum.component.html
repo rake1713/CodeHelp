@@ -4,24 +4,24 @@
       @if (!selectedPost) {
         @if (!authService.isLoggedIn()) {
           <div class="login-banner">
-            <span>Войдите чтобы создать пост →</span>
-            <a routerLink="/login" class="login-banner-btn">Войти</a>
+            <span>Login to post →</span>
+            <a routerLink="/login" class="login-banner-btn">login</a>
           </div>
         } @else {
           <div class="new-post-card">
-            <div class="new-post-title">Новый пост</div>
+            <div class="new-post-title">new post</div>
 
             <div class="form-group">
-              <label>Заголовок</label>
-              <input [(ngModel)]="newPostTitle" type="text" placeholder="Тема поста..." />
+              <label>header</label>
+              <input [(ngModel)]="newPostTitle" type="text" placeholder="post's theme..." />
             </div>
 
             <div class="form-group">
-              <label class="form-label">Категория</label>
+              <label class="form-label">Category</label>
 
               <div class="select-wrap">
                 <select class="category-select" [(ngModel)]="selectedPostCategory">
-                  <option value="">Выбери категорию</option>
+                  <option value="">choose category</option>
                   @for (category of categories; track category.id) {
                     <option [value]="category.id">
                       {{ category.name }}
@@ -32,16 +32,16 @@
             </div>
 
             <div class="form-group">
-              <label>Содержание</label>
+              <label>content</label>
               <textarea [(ngModel)]="newPostContent" placeholder="Напишите пост..."></textarea>
             </div>
 
-            <button class="primary-btn" (click)="createPost()">Опубликовать</button>
+            <button class="primary-btn" (click)="createPost()">Post</button>
           </div>
         }
 
         @if (loading) {
-          <div class="status-box">Загрузка форума...</div>
+          <div class="status-box">Forum loading...</div>
         }
 
         @if (errorMessage) {
@@ -49,7 +49,7 @@
         }
 
         @if (!loading && filteredPosts.length === 0) {
-          <div class="status-box">Постов пока нет</div>
+          <div class="status-box">No posts yet</div>
         }
 
         @if (!loading && filteredPosts.length > 0) {
@@ -91,7 +91,7 @@
             class="back-btn"
             (click)="onBackClick($event)"
           >
-            ← Назад
+            ← back
           </button>
           <div class="post-card detail">
             <div class="post-title">{{ selectedPost.title }}</div>
@@ -119,10 +119,10 @@
           </div>
 
           <div class="comments-section">
-            <h3>Комментарии</h3>
+            <h3>Comments</h3>
 
             @if (comments.length === 0) {
-              <div class="status-box">Комментариев пока нет</div>
+              <div class="status-box">No comments yet</div>
             } @else {
               <div class="comments-list">
                 @for (comment of comments; track comment.id) {
@@ -141,13 +141,13 @@
               <div class="comment-form">
                 <textarea
                   [(ngModel)]="newCommentText"
-                  placeholder="Напишите комментарий..."
+                  placeholder="write the comment..."
                 ></textarea>
-                <button class="primary-btn" (click)="sendComment()">Отправить</button>
+                <button class="primary-btn" (click)="sendComment()">send</button>
               </div>
             } @else {
               <div class="login-hint">
-                Войдите чтобы оставить комментарий
+                Login to comment
               </div>
             }
           </div>
@@ -157,21 +157,21 @@
 
     <div class="forum-sidebar">
       <div class="sidebar-card">
-        <div class="sidebar-title">СТАТИСТИКА ФОРУМА</div>
+        <div class="sidebar-title">STATISTICS OF FORUM</div>
 
         <div class="stat-row">
-          <span>Постов</span>
+          <span>num of post</span>
           <strong>{{ posts.length }}</strong>
         </div>
 
         <div class="stat-row">
-          <span>Комментариев</span>
+          <span>num of comments</span>
           <strong>{{ commentsCount }}</strong>
         </div>
       </div>
 
       <div class="sidebar-card">
-        <div class="sidebar-title">КАТЕГОРИИ</div>
+        <div class="sidebar-title">CATEGORIES</div>
 
         <div class="categories-list">
           <button
@@ -180,7 +180,7 @@
             [class.active-category]="selectedCategory === ''"
             (click)="clearCategoryFilter()"
           >
-            Все
+            All
           </button>
 
           @for (category of categories; track category.id) {

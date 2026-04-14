@@ -92,7 +92,7 @@ export class ForumComponent implements OnInit {
       },
       error: (error) => {
         console.error('FORUM ERROR:', error);
-        this.errorMessage = 'Ошибка загрузки форума';
+        this.errorMessage = 'Error forum loading ';
         this.loading = false;
         this.cdr.detectChanges();
       }
@@ -134,12 +134,12 @@ export class ForumComponent implements OnInit {
 
   createPost(): void {
     if (!this.authService.isLoggedIn()) {
-      this.showToast('Нужно авторизоваться, чтобы создать пост', 'error');
+      this.showToast('Need to login to post', 'error');
       return;
     }
 
     if (!this.newPostTitle.trim() || !this.newPostContent.trim() || !this.selectedPostCategory) {
-      this.showToast('Заполни заголовок, содержание и категорию', 'error');
+      this.showToast('Fill title, content, category', 'error');
       return;
     }
 
@@ -152,12 +152,12 @@ export class ForumComponent implements OnInit {
         this.newPostTitle = '';
         this.newPostContent = '';
         this.selectedPostCategory = '';
-        this.showToast('Пост опубликован', 'success');
+        this.showToast('Post submitted', 'success');
         this.loadForumData();
       },
       error: (error) => {
         console.error('CREATE POST ERROR:', error);
-        this.showToast('Не удалось создать пост', 'error');
+        this.showToast('Posting error', 'error');
       }
     });
   }
@@ -165,7 +165,7 @@ export class ForumComponent implements OnInit {
 
   likePost(post: any): void {
     if (!this.authService.isLoggedIn()) {
-      this.showToast('Чтобы поставить лайк, нужно войти', 'error');
+      this.showToast('Need to login to tap "like"', 'error');
       return;
     }
 
@@ -179,12 +179,12 @@ export class ForumComponent implements OnInit {
           this.selectedPost.liked = data.liked;
         }
 
-        this.showToast(data.liked ? 'Лайк поставлен' : 'Лайк снят', 'success');
+        this.showToast(data.liked ? 'Liked' : 'Un liked', 'success');
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('LIKE ERROR:', error);
-        this.showToast('Ошибка лайка', 'error');
+        this.showToast('Unable to like', 'error');
       }
     });
   }
@@ -210,7 +210,7 @@ export class ForumComponent implements OnInit {
       },
       error: (error) => {
         console.error('COMMENTS LOAD ERROR:', error);
-        this.showToast('Не удалось загрузить комментарии', 'error');
+        this.showToast('Error to commit', 'error');
       }
     });
   }
@@ -226,12 +226,12 @@ export class ForumComponent implements OnInit {
     if (!this.selectedPost) return;
 
     if (!this.authService.isLoggedIn()) {
-      this.showToast('Чтобы оставить комментарий, нужно войти', 'error');
+      this.showToast('Need to login to comment', 'error');
       return;
     }
 
     if (!this.newCommentText.trim()) {
-      this.showToast('Комментарий пустой', 'error');
+      this.showToast('Comment is empty', 'error');
       return;
     }
 
@@ -241,13 +241,13 @@ export class ForumComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.newCommentText = '';
-        this.showToast('Комментарий добавлен', 'success');
+        this.showToast('Comment added', 'success');
         this.loadComments(this.selectedPost.id);
         this.loadForumData();
       },
       error: (error) => {
         console.error('COMMENT ERROR:', error);
-        this.showToast('Не удалось добавить комментарий', 'error');
+        this.showToast('Unable to leave a comment', 'error');
       }
     });
   }

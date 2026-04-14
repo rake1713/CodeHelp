@@ -26,7 +26,7 @@ export class ProblemDetailComponent implements OnInit {
   isBrowser = false;
   selectedLanguage = 'python';
   code = '';
-  outputText = 'Нажми «Отправить», чтобы проверить решение';
+  outputText = 'Tap send to know result';
   submitting = false;
 
   constructor(
@@ -52,7 +52,7 @@ export class ProblemDetailComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.errorMessage = 'Не удалось загрузить задачу';
+        this.errorMessage = 'Failed to load task';
         this.loading = false;
         this.cdr.detectChanges();
       }
@@ -127,9 +127,9 @@ public class Main {
         console.error('SUBMISSION ERROR:', err);
 
         if (err.status === 401) {
-          this.outputText = 'Сначала войди в аккаунт заново';
+          this.outputText = 'First, log in to your account again.';
         } else {
-          this.outputText = 'Не удалось отправить решение';
+          this.outputText = 'Failed to submit solution';
         }
 
         this.submitting = false;

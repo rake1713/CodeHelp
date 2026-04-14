@@ -59,7 +59,7 @@ export class ProblemsComponent implements OnInit {
       },
       error: (err) => {
         console.error('PROBLEMS LOAD ERROR:', err);
-        this.errorMessage = 'Не удалось загрузить задачи';
+        this.errorMessage = 'Failed to load tasks';
         this.loading = false;
         this.cdr.detectChanges();
       }

@@ -2,16 +2,16 @@
   <div class="navbar-left">
     <span class="logo">code<span class="logo-light">Help</span></span>
 
-    <a routerLink="/problems" routerLinkActive="active">Задачи</a>
-    <a routerLink="/forum" routerLinkActive="active">Форум</a>
+    <a routerLink="/problems" routerLinkActive="active">Problems</a>
+    <a routerLink="/forum" routerLinkActive="active">Forum</a>
   </div>
 
   <div class="navbar-right">
     @if (authService.isLoggedIn()) {
       <span class="username">{{ authService.getUsername() }}</span>
-      <button class="login-btn" (click)="logout()">Выйти</button>
+      <button class="login-btn" (click)="logout()">Log Out</button>
     } @else {
-      <a routerLink="/login" class="login-btn">Войти</a>
+      <a routerLink="/login" class="login-btn">Login</a>
     }
   </div>
 </nav>

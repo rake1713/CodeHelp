@@ -1,21 +1,21 @@
 <div class="page-header">
   <div>
-    <h1 class="page-title">Задачи</h1>
-    <p class="page-subtitle">{{ filteredProblems.length }} задач</p>
+    <h1 class="page-title">Problems</h1>
+    <p class="page-subtitle">{{ filteredProblems.length }} Problems</p>
   </div>
 </div>
 
 <div class="problems-layout">
   <aside class="categories-sidebar">
     <div class="categories-card">
-      <div class="categories-title">Категории</div>
+      <div class="categories-title">Categories</div>
 
       <div
         class="category-item"
         [class.active]="selectedCategory === ''"
         (click)="setCategory('')"
       >
-        Все
+        all
       </div>
 
       @for (category of categories; track category) {
@@ -39,7 +39,7 @@
             [class.active]="selectedDifficulty === ''"
             (click)="setDifficulty('')"
           >
-            Все
+            All
           </button>
 
           <button
@@ -77,12 +77,12 @@
         type="text"
         [(ngModel)]="searchText"
         (input)="applyFilters()"
-        placeholder="Поиск задачи..."
+        placeholder="Search Problems..."
       />
     </div>
 
     @if (loading) {
-      <div class="info-box">Загрузка...</div>
+      <div class="info-box">loading...</div>
     }
 
     @if (errorMessage) {
@@ -95,16 +95,16 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>Название</th>
-              <th>Сложность</th>
-              <th>Категория</th>
-              <th>Решений</th>
+              <th>NAME</th>
+              <th>difficult</th>
+              <th>Category</th>
+              <th>Solutions</th>
             </tr>
           </thead>
           <tbody>
             @if (filteredProblems.length === 0) {
               <tr>
-                <td colspan="5" class="empty-cell">Задачи не найдены</td>
+                <td colspan="5" class="empty-cell">Problems не найдены</td>
               </tr>
             } @else {
               @for (problem of filteredProblems; track problem.id) {
