@@ -1,18 +1,25 @@
 <nav class="navbar">
   <div class="navbar-left">
-    <span class="logo">code<span class="logo-light">Help</span></span>
-
+    <a routerLink="/home" class="logo-link">
+      <span class="logo">code<span class="logo-light">Help</span></span>
+    </a>
+    <div class="nav-divider"></div>
+    <a routerLink="/home" routerLinkActive="active">Home</a>
     <a routerLink="/problems" routerLinkActive="active">Problems</a>
     <a routerLink="/forum" routerLinkActive="active">Forum</a>
   </div>
 
   <div class="navbar-right">
     @if (authService.isLoggedIn()) {
-      <span class="username">{{ authService.getUsername() }}</span>
-      <button class="login-btn" (click)="logout()">Log Out</button>
+      <div class="user-profile-widget">
+        <a routerLink="/my-submissions" class="user-info-link">
+          <span class="username">{{ authService.getUsername() }}</span>
+          <span class="user-role">Student Account</span>
+        </a>
+        <button class="minimal-logout" (click)="logout()">Log Out</button>
+      </div>
     } @else {
-      <a routerLink="/login" class="login-btn">Login</a>
+      <a routerLink="/login" class="login-btn">Log In</a>
     }
   </div>
 </nav>
-

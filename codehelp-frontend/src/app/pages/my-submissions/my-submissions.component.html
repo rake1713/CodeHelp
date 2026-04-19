@@ -1,49 +1,54 @@
-@if (loading) {
-  <div class="state-box">Загрузка отправок...</div>
-}
+<div class="page-container">
+  @if (loading) {
+    <div class="status-message">Loading profile data...</div>
+  } @else if (errorMessage) {
+    <div class="status-message error-text">{{ errorMessage }}</div>
+  } @else {
+    <header class="profile-header">
+      <div class="header-left">
+        <div class="profile-avatar">{{ avatarLetter }}</div>
+        <div>
+          <h1>Account Settings</h1>
+          <p>Logged in as <strong>{{ authService.getUsername() }}</strong></p>
+        </div>
+      </div>
+      <button class="btn-outline">Edit Profile</button>
+    </header>
 
-@if (errorMessage) {
-  <div class="state-box error">{{ errorMessage }}</div>
-}
-
-@if (!loading && !errorMessage) {
-  <div class="submissions-page">
-    <div class="top-row">
-      <h1>My Submissions</h1>
-      <a routerLink="/problems" class="back-link">← К задачам</a>
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="label">Total Submissions</span>
+        <span class="value">{{ submissions?.length || 0 }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Current Rank</span>
+        <span class="value">Student</span>
+      </div>
     </div>
 
-    @if (submissions.length === 0) {
-      <div class="empty-box">У тебя пока нет отправок</div>
-    } @else {
-      <div class="table-wrap">
-        <table class="submissions-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Задача</th>
-              <th>Язык</th>
-              <th>Статус</th>
-              <th>Детали</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (submission of submissions; track submission.id) {
-              <tr>
-                <td>{{ submission.id }}</td>
-                <td>{{ submission.problem_title || submission.problem || '—' }}</td>
-                <td>{{ submission.language }}</td>
-                <td>
-                  <span class="status-badge" [class]="getStatusClass(submission.status)">
-                    {{ submission.status }}
-                  </span>
-                </td>
-                <td class="details-cell">{{ submission.status_details || '—' }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+    <section class="activity-section">
+      <h3 class="section-title">Recent Activity</h3>
+      
+      @if (!submissions || submissions.length === 0) {
+        <div class="empty-state">No submissions yet. Start solving problems!</div>
+      }
+
+      <div class="submission-list">
+        @for (sub of submissions; track sub.id) {
+          <div class="submission-item">
+            <div class="sub-left">
+              <div class="status-indicator" [ngClass]="getStatusClass(sub?.status)"></div>
+              <div class="sub-info">
+                <h4>{{ sub?.problem_name || 'Problem #' + sub?.problem }}</h4>
+                <p>Language: {{ sub?.language }} • {{ sub?.created_at | date:'MMM d, y' }}</p>
+              </div>
+            </div>
+            <span [ngClass]="['badge-' + getStatusClass(sub?.status)]">
+              {{ sub?.status }}
+            </span>
+          </div>
+        }
       </div>
-    }
-  </div>
-}
+    </section>
+  }
+</div>

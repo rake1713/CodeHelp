@@ -1,83 +1,86 @@
-<div class="forum-page">
+<div class="page-container">
+  
+  <div class="page-header">
+    <h1 class="page-title">Discussion Forum</h1>
+    <p class="page-subtitle">Ask questions, share solutions, and discuss with the community.</p>
+  </div>
+
   <div class="forum-layout">
     <div class="forum-main">
+      
       @if (!selectedPost) {
+        
         @if (!authService.isLoggedIn()) {
           <div class="login-banner">
-            <span>Login to post →</span>
-            <a routerLink="/login" class="login-banner-btn">login</a>
+            <span>Login to join the discussion</span>
+            <a routerLink="/login" class="btn-outline">Log in</a>
           </div>
         } @else {
           <div class="new-post-card">
-            <div class="new-post-title">new post</div>
+            <h3 class="card-heading">Create a New Post</h3>
 
-            <div class="form-group">
-              <label>header</label>
-              <input [(ngModel)]="newPostTitle" type="text" placeholder="post's theme..." />
-            </div>
+            <div class="form-row">
+              <div class="form-group flex-2">
+                <label>Title</label>
+                <input [(ngModel)]="newPostTitle" type="text" class="linear-input" placeholder="What is your question about?" />
+              </div>
 
-            <div class="form-group">
-              <label class="form-label">Category</label>
-
-              <div class="select-wrap">
-                <select class="category-select" [(ngModel)]="selectedPostCategory">
-                  <option value="">choose category</option>
+              <div class="form-group flex-1">
+                <label>Category</label>
+                <select class="linear-input" [(ngModel)]="selectedPostCategory">
+                  <option value="" disabled selected>Select category...</option>
                   @for (category of categories; track category.id) {
-                    <option [value]="category.id">
-                      {{ category.name }}
-                    </option>
+                    <option [value]="category.id">{{ category.name }}</option>
                   }
                 </select>
               </div>
             </div>
 
             <div class="form-group">
-              <label>content</label>
-              <textarea [(ngModel)]="newPostContent" placeholder="Напишите пост..."></textarea>
+              <label>Content</label>
+              <textarea [(ngModel)]="newPostContent" class="linear-input textarea-main" placeholder="Write your post here..."></textarea>
             </div>
 
-            <button class="primary-btn" (click)="createPost()">Post</button>
+            <div class="form-actions">
+              <button class="primary-btn" (click)="createPost()">Publish Post</button>
+            </div>
           </div>
         }
 
+        <div class="feed-header">
+          <h3>Recent Discussions</h3>
+        </div>
+
         @if (loading) {
-          <div class="status-box">Forum loading...</div>
+          <div class="status-box">Loading discussions...</div>
         }
 
         @if (errorMessage) {
-          <div class="status-box error">{{ errorMessage }}</div>
+          <div class="status-box error-text">{{ errorMessage }}</div>
         }
 
         @if (!loading && filteredPosts.length === 0) {
-          <div class="status-box">No posts yet</div>
+          <div class="empty-state">No posts found in this category. Be the first to ask!</div>
         }
 
         @if (!loading && filteredPosts.length > 0) {
           <div class="posts-list">
             @for (post of filteredPosts; track post.id) {
               <div class="post-card" (click)="openPost(post)">
-                <div class="post-title">{{ post.title }}</div>
-
-                <div class="post-preview">
-                  {{ post.content }}
-                </div>
+                <h4 class="post-title">{{ post.title }}</h4>
+                <p class="post-preview">{{ post.content }}</p>
 
                 <div class="post-footer">
                   <div class="post-meta">
-                    <span>{{ post.author_username || 'Unknown' }}</span>
-                    <span>{{ post.created_at | date:'dd.MM.yyyy' }}</span>
+                    <span class="author">@{{ post.author_username || 'Unknown' }}</span>
+                    <span class="dot">•</span>
+                    <span class="date">{{ post.created_at | date:'MMM d, yyyy' }}</span>
                   </div>
 
                   <div class="post-actions" (click)="$event.stopPropagation()">
-                    <button
-                      class="like-btn"
-                      [class.liked]="post.liked"
-                      (click)="likePost(post)"
-                    >
-                      ♥ {{ post.likes_count ?? 0 }}
+                    <button class="like-btn" [class.liked]="post.liked" (click)="likePost(post)">
+                      <span class="heart-icon">♥</span> {{ post.likes_count ?? 0 }}
                     </button>
-
-                    
                   </div>
                 </div>
               </div>
@@ -85,32 +88,25 @@
           </div>
         }
       } @else {
+        
         <div class="post-detail-wrapper">
-          <button
-            type="button"
-            class="back-btn"
-            (click)="onBackClick($event)"
-          >
-            ← back
+          <button type="button" class="back-link" (click)="onBackClick($event)">
+            ← Back to discussions
           </button>
-          <div class="post-card detail">
-            <div class="post-title">{{ selectedPost.title }}</div>
+          
+          <div class="post-card detail-card">
+            <h2 class="post-title-large">{{ selectedPost.title }}</h2>
 
-            <div class="post-footer">
-              <div class="post-meta">
-                <span>{{ selectedPost.author_username || 'Unknown' }}</span>
-                <span>{{ selectedPost.created_at | date:'dd.MM.yyyy' }}</span>
+            <div class="post-meta detail-meta">
+              <div class="author-avatar">{{ (selectedPost.author_username || 'U').charAt(0).toUpperCase() }}</div>
+              <div class="meta-info">
+                <span class="author">@{{ selectedPost.author_username || 'Unknown' }}</span>
+                <span class="date">Posted on {{ selectedPost.created_at | date:'mediumDate' }}</span>
               </div>
-
-              <div class="post-actions">
-                <button
-                  class="like-btn"
-                  [class.liked]="selectedPost.liked"
-                  (click)="likePost(selectedPost)"
-                >
-                  ♥ {{ selectedPost.likes_count ?? 0 }}
-                </button>
-              </div>
+              
+              <button class="like-btn ml-auto" [class.liked]="selectedPost.liked" (click)="likePost(selectedPost)">
+                <span class="heart-icon">♥</span> {{ selectedPost.likes_count ?? 0 }}
+              </button>
             </div>
 
             <div class="detail-content">
@@ -119,17 +115,17 @@
           </div>
 
           <div class="comments-section">
-            <h3>Comments</h3>
+            <h3 class="section-title">Comments ({{ comments.length }})</h3>
 
             @if (comments.length === 0) {
-              <div class="status-box">No comments yet</div>
+              <div class="empty-state small">No comments yet. Start the conversation!</div>
             } @else {
               <div class="comments-list">
                 @for (comment of comments; track comment.id) {
                   <div class="comment-card">
-                    <div class="comment-author">
-                      {{ comment.author_username || 'Unknown' }}
-                      <span>{{ comment.created_at | date:'dd.MM.yyyy' }}</span>
+                    <div class="comment-header">
+                      <span class="comment-author">@{{ comment.author_username || 'Unknown' }}</span>
+                      <span class="comment-date">{{ comment.created_at | date:'MMM d, h:mm a' }}</span>
                     </div>
                     <div class="comment-text">{{ comment.text }}</div>
                   </div>
@@ -139,15 +135,14 @@
 
             @if (authService.isLoggedIn()) {
               <div class="comment-form">
-                <textarea
-                  [(ngModel)]="newCommentText"
-                  placeholder="write the comment..."
-                ></textarea>
-                <button class="primary-btn" (click)="sendComment()">send</button>
+                <textarea [(ngModel)]="newCommentText" class="linear-input" placeholder="Write a comment..."></textarea>
+                <div class="form-actions">
+                  <button class="primary-btn" (click)="sendComment()">Reply</button>
+                </div>
               </div>
             } @else {
-              <div class="login-hint">
-                Login to comment
+              <div class="login-banner small">
+                <span>Login to leave a comment</span>
               </div>
             }
           </div>
@@ -155,47 +150,34 @@
       }
     </div>
 
-    <div class="forum-sidebar">
+    <aside class="forum-sidebar">
       <div class="sidebar-card">
-        <div class="sidebar-title">STATISTICS OF FORUM</div>
-
+        <h4 class="sidebar-title">Forum Stats</h4>
         <div class="stat-row">
-          <span>num of post</span>
-          <strong>{{ posts.length }}</strong>
+          <span class="stat-label">Total Posts</span>
+          <span class="stat-value">{{ posts.length }}</span>
         </div>
-
         <div class="stat-row">
-          <span>num of comments</span>
-          <strong>{{ commentsCount }}</strong>
+          <span class="stat-label">Total Comments</span>
+          <span class="stat-value">{{ commentsCount }}</span>
         </div>
       </div>
 
       <div class="sidebar-card">
-        <div class="sidebar-title">CATEGORIES</div>
-
+        <h4 class="sidebar-title">Filter by Topic</h4>
         <div class="categories-list">
-          <button
-            type="button"
-            class="category-item"
-            [class.active-category]="selectedCategory === ''"
-            (click)="clearCategoryFilter()"
-          >
-            All
+          <button type="button" class="category-item" [class.active]="selectedCategory === ''" (click)="clearCategoryFilter()">
+            All Topics
           </button>
 
           @for (category of categories; track category.id) {
-            <button
-              type="button"
-              class="category-item"
-              [class.active-category]="selectedCategory === category.name"
-              (click)="filterByCategory(category.name)"
-            >
+            <button type="button" class="category-item" [class.active]="selectedCategory === category.name" (click)="filterByCategory(category.name)">
               {{ category.name }}
             </button>
           }
         </div>
       </div>
-    </div>
+    </aside>
   </div>
 
   @if (toastVisible) {

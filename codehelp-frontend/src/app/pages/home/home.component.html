@@ -1,2 +1,61 @@
-<h2>Home</h2>
-<p>Главная страница</p>
+<div class="home-layout">
+  <main class="main-content">
+    <div class="page-container"> <section class="hero">
+        <div class="badge">KBTU Coding Platform</div>
+        <h1>Master Algorithms.<br>Build Projects.</h1>
+        <p>The modern platform for students to practice coding, prepare for interviews, and share knowledge.</p>
+        
+        <div class="search-wrapper">
+          <input #searchInput type="text" placeholder="Search for problems or topics..." class="search-input">
+          <kbd>⌘K</kbd>
+        </div>
+      </section>
+
+      <section class="languages">
+        <h3 class="section-title">Programming Tracks</h3>
+        <div class="grid">
+          <div class="card">
+            <span class="icon">🐍</span>
+            <h4>Python</h4>
+            <p>Data Science, Django, and Scripting.</p>
+          </div>
+          <div class="card">
+            <span class="icon">⚙️</span>
+            <h4>C++</h4>
+            <p>Competitive Programming and Systems.</p>
+          </div>
+          <div class="card">
+            <span class="icon">☕</span>
+            <h4>Java</h4>
+            <p>Enterprise Backend and Android.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-content"> <div class="footer-brand">
+        <span class="logo">code<span class="logo-light">Help</span></span>
+        <p class="footer-desc">Empowering KBTU students to build better software.</p>
+      </div>
+      
+      <div class="footer-links">
+        <div class="link-column">
+          <h4>Resources</h4>
+          <a routerLink="/problems">Practice Problems</a>
+          <a routerLink="/forum">Discussion Forum</a>
+        </div>
+        <div class="link-column">
+          <h4>Legal</h4>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2026 KBTU CodeHelp. All rights reserved.</p>
+    </div>
+  </footer>
+</div>

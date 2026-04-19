@@ -1,138 +1,97 @@
-<div class="page-header">
-  <div>
-    <h1 class="page-title">Problems</h1>
-    <p class="page-subtitle">{{ filteredProblems.length }} Problems</p>
+<div class="page-container">
+  
+  <div class="page-header">
+    <h1 class="page-title">Practice Problems</h1>
+    <p class="page-subtitle">Showing {{ filteredProblems.length }} challenges to boost your skills</p>
   </div>
-</div>
 
-<div class="problems-layout">
-  <aside class="categories-sidebar">
-    <div class="categories-card">
-      <div class="categories-title">Categories</div>
+  <div class="problems-layout">
+    <aside class="categories-sidebar">
+      <div class="categories-card">
+        <div class="categories-title">Topics</div>
 
-      <div
-        class="category-item"
-        [class.active]="selectedCategory === ''"
-        (click)="setCategory('')"
-      >
-        all
+        <div class="category-item" [class.active]="selectedCategory === ''" (click)="setCategory('')">
+          All Topics
+        </div>
+
+        @for (category of categories; track category) {
+          <div class="category-item" [class.active]="selectedCategory === category" (click)="setCategory(category)">
+            {{ category }}
+          </div>
+        }
+      </div>
+    </aside>
+
+    <section class="problems-content">
+      
+      <div class="top-controls">
+        <div class="left-controls">
+          <div class="filters">
+            <button class="filter-chip" [class.active]="selectedDifficulty === ''" (click)="setDifficulty('')">All</button>
+            <button class="filter-chip easy" [class.active]="selectedDifficulty === 'Easy'" (click)="setDifficulty('Easy')">Easy</button>
+            <button class="filter-chip medium" [class.active]="selectedDifficulty === 'Medium'" (click)="setDifficulty('Medium')">Medium</button>
+            <button class="filter-chip hard" [class.active]="selectedDifficulty === 'Hard'" (click)="setDifficulty('Hard')">Hard</button>
+          </div>
+        </div>
+
+        <div class="right-controls">
+          <input class="search-box" type="text" [(ngModel)]="searchText" (input)="applyFilters()" placeholder="Search challenges...">
+          <a routerLink="/my-submissions" class="btn-submissions">My Submissions</a>
+        </div>
       </div>
 
-      @for (category of categories; track category) {
-        <div
-          class="category-item"
-          [class.active]="selectedCategory === category"
-          (click)="setCategory(category)"
-        >
-          {{ category }}
+      @if (loading) {
+        <div class="info-box">Loading problems...</div>
+      }
+      @if (errorMessage) {
+        <div class="error-box">{{ errorMessage }}</div>
+      }
+
+      @if (!loading && !errorMessage) {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Problem Title</th>
+                <th>Difficulty</th>
+                <th>Category</th>
+                <th>Solutions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (filteredProblems.length === 0) {
+                <tr>
+                  <td colspan="5" class="empty-cell">No problems found matching your criteria.</td>
+                </tr>
+              } @else {
+                @for (problem of filteredProblems; track problem.id) {
+                  <tr>
+                    <td class="status-cell">
+                      <div class="circle-indicator"></div>
+                    </td>
+                    <td>
+                      <a class="problem-link" [routerLink]="['/problems', problem.id]">
+                        {{ problem.title }}
+                      </a>
+                    </td>
+                    <td>
+                      <span class="difficulty-badge" 
+                            [class.easy]="problem.difficulty === 'Easy'"
+                            [class.medium]="problem.difficulty === 'Medium'"
+                            [class.hard]="problem.difficulty === 'Hard'">
+                        {{ problem.difficulty }}
+                      </span>
+                    </td>
+                    <td class="text-secondary">{{ problem.category_name || 'General' }}</td>
+                    <td class="text-secondary">{{ problem.submissions_count ?? '0' }}</td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
         </div>
       }
-    </div>
-  </aside>
-
-  <section class="problems-content">
-    <div class="top-controls">
-      <div class="left-controls">
-        <div class="filters">
-          <button
-            class="filter-chip"
-            [class.active]="selectedDifficulty === ''"
-            (click)="setDifficulty('')"
-          >
-            All
-          </button>
-
-          <button
-            class="filter-chip"
-            [class.active]="selectedDifficulty === 'Easy'"
-            (click)="setDifficulty('Easy')"
-          >
-            Easy
-          </button>
-
-          <button
-            class="filter-chip"
-            [class.active]="selectedDifficulty === 'Medium'"
-            (click)="setDifficulty('Medium')"
-          >
-            Medium
-          </button>
-
-          <button
-            class="filter-chip"
-            [class.active]="selectedDifficulty === 'Hard'"
-            (click)="setDifficulty('Hard')"
-          >
-            Hard
-          </button>
-        </div>
-
-        <a routerLink="/my-submissions" class="submissions-btn">
-          My Submissions
-        </a>
-      </div>
-
-      <input
-        class="search-box"
-        type="text"
-        [(ngModel)]="searchText"
-        (input)="applyFilters()"
-        placeholder="Search Problems..."
-      />
-    </div>
-
-    @if (loading) {
-      <div class="info-box">loading...</div>
-    }
-
-    @if (errorMessage) {
-      <div class="error-box">{{ errorMessage }}</div>
-    }
-
-    @if (!loading && !errorMessage) {
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>NAME</th>
-              <th>difficult</th>
-              <th>Category</th>
-              <th>Solutions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (filteredProblems.length === 0) {
-              <tr>
-                <td colspan="5" class="empty-cell">Problems не найдены</td>
-              </tr>
-            } @else {
-              @for (problem of filteredProblems; track problem.id) {
-                <tr>
-                  <td>{{ problem.id }}</td>
-                  <td>
-                    <a class="problem-link" [routerLink]="['/problems', problem.id]">
-                      {{ problem.title }}
-                    </a>
-                  </td>
-                  <td>
-                    <span
-                      class="difficulty-badge"
-                      [class.easy]="problem.difficulty === 'Easy'"
-                      [class.medium]="problem.difficulty === 'Medium'"
-                      [class.hard]="problem.difficulty === 'Hard'"
-                    >
-                      {{ problem.difficulty }}
-                    </span>
-                  </td>
-                  <td>{{ problem.category_name || '—' }}</td>
-                  <td>{{ problem.submissions_count ?? '—' }}</td>
-                </tr>
-              }
-            }
-          </tbody>
-        </table>
-      </div>
-    }
-  </section>
+    </section>
+  </div>
 </div>
