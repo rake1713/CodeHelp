@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
 
     def __str__(self):
@@ -22,11 +22,10 @@ class Problem(models.Model):
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES)
     input_example = models.TextField(blank=True)
     output_example = models.TextField(blank=True)
-
-
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='problems')
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_problems')
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_problems')
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -57,8 +56,8 @@ class Submission(models.Model):
         ('java', 'Java'),
     ]
 
-    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='submissions')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
+    problem = models.ForeignKey(Problem, on_delete=models.PROTECT, related_name='submissions')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='submissions')
     status_details = models.TextField(blank=True, null=True)
     code = models.TextField()
     language = models.CharField(max_length=20, choices=LANGUAGE_CHOICES, default='python')
@@ -66,15 +65,17 @@ class Submission(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.problem.title}"
+        user = self.user.username if self.user else 'Deleted User'
+        return f"{user} - {self.problem.title}"
 
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='posts')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
 
     def __str__(self):
@@ -87,10 +88,12 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='comments')
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
 
     def __str__(self):
-        return f"Comment by {self.author.username} on {self.post.title}"
+        author = self.author.username if self.author else 'Deleted User'
+        return f"Comment by {author} on {self.post.title}"

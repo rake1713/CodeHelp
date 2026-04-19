@@ -1,22 +1,36 @@
 from rest_framework import serializers
 from .models import Category, Problem, Submission, Post, Comment
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, min_length=8)
+    email = serializers.EmailField(required=True)
 
     class Meta:
         model = User
         fields = ['username', 'email', 'password']
 
+    def validate_email(self, value):
+        if User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError('Пользователь с таким email уже существует.')
+        return value.lower()
+
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(list(e.messages))
+        return value
+
     def create(self, validated_data):
-        user = User.objects.create_user(
+        return User.objects.create_user(
             username=validated_data['username'],
-            email=validated_data.get('email', ''),
+            email=validated_data['email'],
             password=validated_data['password']
         )
-        return user
 
 
 class CategorySimpleSerializer(serializers.Serializer):
@@ -27,8 +41,8 @@ class CategorySimpleSerializer(serializers.Serializer):
 
 class SubmissionCreateSerializer(serializers.Serializer):
     problem = serializers.IntegerField()
-    code = serializers.CharField()
-    language = serializers.CharField()
+    code = serializers.CharField(max_length=65536)
+    language = serializers.ChoiceField(choices=['python', 'cpp', 'java'])
 
 
 class CategoryModelSerializer(serializers.ModelSerializer):
@@ -53,7 +67,8 @@ class SubmissionModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = '__all__'
+        fields = ['id', 'problem', 'problem_title', 'username', 'code', 'language', 'status', 'status_details', 'created_at']
+        read_only_fields = ['user', 'status', 'status_details', 'created_at']
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -63,6 +78,14 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'post', 'author_username', 'text', 'parent', 'replies', 'created_at']
+        read_only_fields = ['author']
+
+    def validate(self, attrs):
+        parent = attrs.get('parent')
+        post = attrs.get('post')
+        if parent and post and parent.post_id != post.id:
+            raise serializers.ValidationError({'parent': 'Родительский комментарий принадлежит другому посту.'})
+        return attrs
 
     def get_replies(self, obj):
         depth = self.context.get('reply_depth', 1)
@@ -77,9 +100,9 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     author_username = serializers.CharField(source='author.username', read_only=True)
     likes_count = serializers.IntegerField(source='total_likes', read_only=True)
-    comments_count = serializers.IntegerField(source='comments.count', read_only=True)
+    comments_count = serializers.IntegerField(read_only=True, default=0)
 
     class Meta:
         model = Post
-        exclude = ['likes'] 
+        fields = ['id', 'title', 'content', 'author', 'author_username', 'category', 'created_at', 'likes_count', 'comments_count']
         read_only_fields = ['author', 'created_at']

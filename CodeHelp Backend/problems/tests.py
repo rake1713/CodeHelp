@@ -5,7 +5,6 @@ from .models import Category, Problem, TestCase as DBTestCase, Submission, Post,
 
 class CodeHelpAPITests(APITestCase):
     def setUp(self):
-        """Этот метод запускается ПЕРЕД каждым тестом. Подготавливаем данные."""
         self.admin = User.objects.create_superuser(username='admin', password='adminpass')
         self.student = User.objects.create_user(username='student', password='studentpass')
 

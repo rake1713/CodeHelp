@@ -1,2 +1,23 @@
-CodeHelp Backend/venv/
+venv/
+.env
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pot
+*.mo
+db.sqlite3
+*.sqlite3
+staticfiles/
+media/
+node_modules/
+dist/
+.angular/
+*.js.map
+*.log
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/
+BACKEND.txt

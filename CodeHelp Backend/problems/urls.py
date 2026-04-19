@@ -10,7 +10,12 @@ from .views import (
     SubmissionViewSet,
     PostViewSet,
     CommentViewSet,
-    UserRegistrationAPIView
+    UserRegistrationAPIView,
+    LogoutView,
+    UserProfileView,
+    ProblemDetailView,
+    search_problems,
+    my_stats,
 )
 
 router = DefaultRouter()
@@ -21,10 +26,14 @@ router.register(r'submissions', SubmissionViewSet, basename='submission')
 router.register(r'posts', PostViewSet, basename='post')
 router.register(r'comments', CommentViewSet, basename='comment')
 
-
 urlpatterns = [
     path('', include(router.urls)),
     path('register/', UserRegistrationAPIView.as_view(), name='register'),
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'), 
-    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('profile/', UserProfileView.as_view(), name='profile'),
+    path('problems/<int:pk>/detail/', ProblemDetailView.as_view(), name='problem-detail'),
+    path('problems/search/', search_problems, name='problem-search'),
+    path('stats/', my_stats, name='my-stats'),
 ]

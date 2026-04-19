@@ -1,8 +1,9 @@
 import subprocess
 import tempfile
 import os
+import resource
 
-MAX_CODE_SIZE_BYTES = 64 * 1024  # 64 KB
+MAX_CODE_SIZE_BYTES = 64 * 1024
 
 SAFE_ENV = {
     'PATH': '/usr/local/bin:/usr/bin:/bin',
@@ -11,13 +12,10 @@ SAFE_ENV = {
 }
 
 
-def detect_language(code):
-    """Простое автоопределение языка по ключевым словам"""
-    if "#include" in code and ("int main" in code or "std::" in code):
-        return 'cpp'
-    if "public class" in code and "static void main" in code:
-        return 'java'
-    return 'python'
+def _apply_resource_limits():
+    resource.setrlimit(resource.RLIMIT_CPU, (5, 5))
+    resource.setrlimit(resource.RLIMIT_FSIZE, (10 * 1024 * 1024, 10 * 1024 * 1024))
+    os.setpgrp()
 
 
 def run_submission(submission):
@@ -29,10 +27,6 @@ def run_submission(submission):
 
     if not test_cases:
         return "No Test Cases", "Админ ещё не добавил тесты для этой задачи."
-
-    if not submission.language or submission.language == 'auto':
-        submission.language = detect_language(submission.code)
-        submission.save()
 
     for index, test in enumerate(test_cases, 1):
         try:
@@ -80,6 +74,8 @@ def run_submission(submission):
                     capture_output=True,
                     timeout=2,
                     env=SAFE_ENV,
+                    close_fds=True,
+                    preexec_fn=_apply_resource_limits,
                 )
 
                 stdout = process.stdout[:10_000]
