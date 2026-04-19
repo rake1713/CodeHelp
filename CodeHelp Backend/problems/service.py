@@ -1,8 +1,14 @@
 import subprocess
 import tempfile
 import os
-import resource
+import sys
 
+# Пытаемся импортировать resource только если мы НЕ на Windows
+if sys.platform != 'win32':
+    import resource
+else:
+    resource = None
+    
 MAX_CODE_SIZE_BYTES = 64 * 1024
 
 SAFE_ENV = {
@@ -13,9 +19,10 @@ SAFE_ENV = {
 
 
 def _apply_resource_limits():
-    resource.setrlimit(resource.RLIMIT_CPU, (5, 5))
-    resource.setrlimit(resource.RLIMIT_FSIZE, (10 * 1024 * 1024, 10 * 1024 * 1024))
-    os.setpgrp()
+    if resource is not None:
+        resource.setrlimit(resource.RLIMIT_CPU, (5, 5))
+        resource.setrlimit(resource.RLIMIT_FSIZE, (10 * 1024 * 1024, 10 * 1024 * 1024))
+        os.setpgrp()
 
 
 def run_submission(submission):

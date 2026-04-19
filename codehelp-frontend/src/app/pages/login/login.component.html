@@ -1,31 +1,32 @@
 <div class="auth-page">
   <div class="auth-card">
+    <div class="brand-logo">code<span class="logo-light">Help</span></div>
+    
     <h2 class="auth-title">Login</h2>
-    <p class="auth-subtitle">Login to your account</p>
+    <p class="auth-subtitle">Login to your account.</p>
 
     <div class="form-group">
-      <label>login</label>
-      <input [(ngModel)]="username" type="text" placeholder="username" />
+      <label>Username</label>
+      <input [(ngModel)]="username" type="text" class="linear-input" placeholder="Enter your username" />
     </div>
 
     <div class="form-group">
       <label>Password</label>
-      <input [(ngModel)]="password" type="password" placeholder="••••••••" />
+      <input [(ngModel)]="password" type="password" class="linear-input" placeholder="••••••••" />
     </div>
 
-    <button class="login-btn" (click)="onLogin()">Login</button>
+    <button class="primary-btn" (click)="onLogin()">Login</button>
 
     @if (loading) {
-      <p class="info-text">Loading...</p>
+      <div class="status-msg">Loading...</div>
     }
 
     @if (errorMessage) {
-      <p class="error-text">{{ errorMessage }}</p>
+      <div class="status-msg error">{{ errorMessage }}</div>
     }
 
-    <div class="register-link">
-      No account?
-      <a routerLink="/register">Registration</a>
+    <div class="auth-footer">
+      No account? <a routerLink="/register">Registration</a>
     </div>
   </div>
 </div>
