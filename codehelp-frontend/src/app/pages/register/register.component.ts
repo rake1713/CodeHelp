@@ -1,45 +1,59 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { RouterLink } from '@angular/router';
-
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-
   username = '';
+  email = ''; // <-- НОВОЕ ПОЛЕ
   password = '';
   confirmPassword = '';
-
   error = '';
+  loading = false;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-  register(): void {
-    if (this.password !== this.confirmPassword) {
-      this.error = 'Пароли не совпадают';
+  register() {
+    this.error = '';
+
+    if (!this.username || !this.email || !this.password) {
+      this.error = 'Please fill in all fields';
       return;
     }
 
+    if (this.password !== this.confirmPassword) {
+      this.error = 'Passwords do not match';
+      return;
+    }
+
+    this.loading = true;
+    
+    // Передаем email вместе с остальными данными
     this.authService.register({
       username: this.username,
+      email: this.email,
       password: this.password
     }).subscribe({
       next: () => {
+        this.loading = false;
+        // После успешной регистрации сразу перекидываем на логин
         this.router.navigate(['/login']);
       },
-      error: () => {
-        this.error = 'Ошибка регистрации';
+      error: (err) => {
+        this.loading = false;
+        // Пытаемся вытащить понятную ошибку от бэкенда (Django обычно присылает их так)
+        this.error = err.error?.email?.[0] || 
+                     err.error?.username?.[0] || 
+                     err.error?.password?.[0] || 
+                     'Registration failed. Please try again.';
       }
     });
   }
