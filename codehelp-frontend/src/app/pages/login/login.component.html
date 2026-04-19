@@ -1,0 +1,31 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h2 class="auth-title">Login</h2>
+    <p class="auth-subtitle">Login to your account</p>
+
+    <div class="form-group">
+      <label>login</label>
+      <input [(ngModel)]="username" type="text" placeholder="username" />
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input [(ngModel)]="password" type="password" placeholder="••••••••" />
+    </div>
+
+    <button class="login-btn" (click)="onLogin()">Login</button>
+
+    @if (loading) {
+      <p class="info-text">Loading...</p>
+    }
+
+    @if (errorMessage) {
+      <p class="error-text">{{ errorMessage }}</p>
+    }
+
+    <div class="register-link">
+      No account?
+      <a routerLink="/register">Registration</a>
+    </div>
+  </div>
+</div>

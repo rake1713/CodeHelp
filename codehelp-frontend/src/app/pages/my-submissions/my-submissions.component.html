@@ -1,0 +1,49 @@
+@if (loading) {
+  <div class="state-box">Загрузка отправок...</div>
+}
+
+@if (errorMessage) {
+  <div class="state-box error">{{ errorMessage }}</div>
+}
+
+@if (!loading && !errorMessage) {
+  <div class="submissions-page">
+    <div class="top-row">
+      <h1>My Submissions</h1>
+      <a routerLink="/problems" class="back-link">← К задачам</a>
+    </div>
+
+    @if (submissions.length === 0) {
+      <div class="empty-box">У тебя пока нет отправок</div>
+    } @else {
+      <div class="table-wrap">
+        <table class="submissions-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Задача</th>
+              <th>Язык</th>
+              <th>Статус</th>
+              <th>Детали</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (submission of submissions; track submission.id) {
+              <tr>
+                <td>{{ submission.id }}</td>
+                <td>{{ submission.problem_title || submission.problem || '—' }}</td>
+                <td>{{ submission.language }}</td>
+                <td>
+                  <span class="status-badge" [class]="getStatusClass(submission.status)">
+                    {{ submission.status }}
+                  </span>
+                </td>
+                <td class="details-cell">{{ submission.status_details || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+}

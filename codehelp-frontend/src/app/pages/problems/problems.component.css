@@ -1,0 +1,203 @@
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.page-subtitle {
+  color: #8d8d8d;
+  font-size: 14px;
+}
+
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-chip {
+  height: 40px; /* одинаковая высота */
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: white;
+  cursor: pointer;
+}
+
+.filter-chip.active {
+  background: #111827;
+  color: white;
+  border-color: #111827;
+}
+
+.problems-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+}
+
+.categories-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 20px 24px;
+  background: #fff;
+}
+
+.categories-title {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.category-item {
+  margin-bottom: 14px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #4b5563;
+}
+
+.category-item:hover {
+  color: #111827;
+}
+
+.category-item.active {
+  color: #111827;
+  font-weight: 700;
+}
+
+.search-box {
+  margin-left: auto;
+  min-width: 220px;
+  padding: 10px 14px;
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+}
+
+.table-wrap {
+  overflow: hidden;
+  border: 1px solid #e7e7e7;
+  border-radius: 16px;
+  background: white;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f7f7f7;
+}
+
+th {
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 16px;
+  border-top: 1px solid #efefef;
+}
+
+.problem-link {
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+}
+
+.problem-link:hover {
+  text-decoration: underline;
+}
+
+.difficulty-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.difficulty-badge.easy {
+  background: #eefaf1;
+  color: #2d7a4f;
+}
+
+.difficulty-badge.medium {
+  background: #fff8e8;
+  color: #b07d1a;
+}
+
+.difficulty-badge.hard {
+  background: #fff0f0;
+  color: #c0392b;
+}
+
+.info-box,
+.error-box {
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.info-box {
+  background: #f6f6f6;
+}
+
+.error-box {
+  background: #fff0f0;
+  color: #c0392b;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #888;
+  padding: 24px;
+}
+.top-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* ВАЖНО */
+  margin-bottom: 20px;
+}
+
+.left-controls {
+  display: flex;
+  align-items: center; /* ВЫРАВНИВАЕТ ВСЕ В ЛИНИЮ */
+  gap: 12px;
+}
+
+.submissions-btn {
+  height: 40px; /* ТО ЖЕ САМОЕ */
+  padding: 0 16px;
+  border-radius: 10px;
+  background: #111827;
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+
+.submissions-btn:hover {
+  background: #1f2937;
+}
+
+.search-box {
+  height: 40px; /* ТО ЖЕ САМОЕ */
+  width: 260px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+}
