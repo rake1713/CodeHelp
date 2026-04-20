@@ -1,25 +1,45 @@
 <nav class="navbar">
+  
   <div class="navbar-left">
     <a routerLink="/home" class="logo-link">
       <span class="logo">code<span class="logo-light">Help</span></span>
     </a>
+    
     <div class="nav-divider"></div>
+    
     <a routerLink="/home" routerLinkActive="active">Home</a>
     <a routerLink="/problems" routerLinkActive="active">Problems</a>
     <a routerLink="/forum" routerLinkActive="active">Forum</a>
   </div>
 
   <div class="navbar-right">
+    
     @if (authService.isLoggedIn()) {
-      <div class="user-profile-widget">
-        <a routerLink="/my-submissions" class="user-info-link">
-          <span class="username">{{ authService.getUsername() }}</span>
-          <span class="user-role">Student Account</span>
+      <div class="user-controls">
+        
+        <a routerLink="/my-submissions" class="user-profile-link" title="Go to My Submissions">
+          <div class="nav-avatar">{{ authService.getUsername().charAt(0).toUpperCase() }}</div>
+          <span class="user-name-truncate">{{ authService.getUsername() }}</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-chevron">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
         </a>
-        <button class="minimal-logout" (click)="logout()">Log Out</button>
+
+        <div class="nav-divider user-divider"></div>
+        
+        <button class="logout-btn" (click)="authService.logout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logout-icon">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Log out
+        </button>
+
       </div>
     } @else {
       <a routerLink="/login" class="login-btn">Log in</a>
     }
+    
   </div>
 </nav>

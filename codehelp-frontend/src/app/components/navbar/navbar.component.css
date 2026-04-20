@@ -1,3 +1,6 @@
+/* =========================================
+   ОСНОВНОЙ КОНТЕЙНЕР НАВБАРА
+   ========================================= */
 .navbar {
   height: 60px;
   display: flex;
@@ -18,6 +21,9 @@
   gap: 24px;
 }
 
+/* =========================================
+   ЛОГОТИП И ССЫЛКИ
+   ========================================= */
 .logo-link {
   text-decoration: none;
   transition: opacity 0.2s;
@@ -25,7 +31,7 @@
 .logo-link:hover { opacity: 0.8; }
 
 .logo {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--text-primary);
@@ -35,16 +41,18 @@
   font-weight: 500;
 }
 
+/* Универсальный разделитель (полоска) */
 .nav-divider {
   width: 1px;
-  height: 18px;
+  height: 20px;
   background: var(--border-color);
   margin: 0 4px;
 }
 
-.navbar a:not(.logo-link):not(.login-btn):not(.user-info-link) {
+/* Обычные ссылки меню */
+.navbar-left a:not(.logo-link) {
   text-decoration: none;
-  color: var(--text-secondary); /* Серый цвет по умолчанию */
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
   padding: 6px 12px;
@@ -52,63 +60,132 @@
   transition: all 0.2s;
 }
 
-.navbar a:not(.logo-link):not(.login-btn):not(.user-info-link):hover {
+.navbar-left a:not(.logo-link):hover {
   color: var(--text-primary);
   background: rgba(0, 0, 0, 0.03);
 }
-.navbar a.active {
-  color: var(--text-primary);
-}
-.navbar a.active:not(.logo-link):not(.login-btn):not(.user-info-link) {
+
+.navbar-left a.active:not(.logo-link) {
   color: var(--text-primary);
   font-weight: 600;
-  background: rgba(0, 0, 0, 0.05); /* Легкий серый фон для активной вкладки */
+  background: rgba(0, 0, 0, 0.05);
 }
+
+/* =========================================
+   КНОПКА ЛОГИНА (Для неавторизованных)
+   ========================================= */
 .login-btn {
   background: var(--surface-color);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 8px 18px;
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   transition: all 0.2s;
 }
-.login-btn:hover { background: #f9fafb; }
-
-.user-profile-widget {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+.login-btn:hover { 
+  background: #f9fafb; 
+  border-color: #d1d5db; 
 }
 
-.user-info-link {
+/* =========================================
+   ПРОФИЛЬ И LOG OUT (Справа)
+   ========================================= */
+
+/* Выстраиваем элементы в одну линию с маленьким отступом */
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Уменьшили gap, чтобы убрать дыру */
+}
+
+/* Убираем лишние margin у разделителя, чтобы он не добавлял пустоту */
+.user-divider {
+  margin: 0; 
+}
+
+/* Кликабельная капсула с именем */
+.user-profile-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  color: var(--text-primary);
+  padding: 4px 8px 4px 4px; 
+  border-radius: 40px;
+  transition: background-color 0.2s ease;
+  max-width: 200px;
 }
 
-.username {
-  color: var(--text-primary);
+.user-profile-link:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Круглая аватарка (Первая буква) */
+.nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--text-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Имя пользователя (с авто-обрезкой если очень длинное) */
+.user-name-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Маленькая стрелочка справа от имени */
+.nav-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.user-profile-link:hover .nav-chevron {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* --- КНОПКА ЛОГАУТА --- */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
   font-size: 13px;
   font-weight: 600;
-  line-height: 1.2;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.user-role {
-  color: var(--text-secondary);
-  font-size: 11px;
+.logout-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
 }
 
-.minimal-logout {
-  color: var(--text-secondary);
-  font-size: 11px;
-  font-weight: 500;
-  padding: 0;
-  transition: color 0.2s;
+.logout-btn:hover { 
+  color: var(--error-color, #ef4444); 
+  background: rgba(239, 68, 68, 0.06); 
 }
-.minimal-logout:hover { color: var(--error-color); text-decoration: underline; }

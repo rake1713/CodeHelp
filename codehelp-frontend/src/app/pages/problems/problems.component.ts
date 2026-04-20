@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ProblemService } from '../../services/problem.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-problems',
@@ -40,34 +39,13 @@ export class ProblemsComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private problemService: ProblemService,
-    private route: ActivatedRoute
-    
+    private problemService: ProblemService
   ) {}
 
   ngOnInit(): void {
     this.loadProblems();
-
-    // Слушаем параметры из URL (с главной страницы)
-    this.route.queryParams.subscribe(params => {
-      let shouldFilter = false;
-      
-      if (params['q']) {
-        this.searchText = params['q'];
-        shouldFilter = true;
-      }
-      
-      if (params['category']) {
-        this.selectedCategory = params['category'];
-        shouldFilter = true;
-      }
-
-      if (shouldFilter) {
-        // Даем Angular миллисекунду на загрузку данных, затем фильтруем
-        setTimeout(() => this.applyFilters(), 100);
-      }
-    });
   }
+
   loadProblems(): void {
     this.loading = true;
     this.errorMessage = '';
