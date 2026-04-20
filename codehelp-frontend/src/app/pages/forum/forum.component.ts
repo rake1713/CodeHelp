@@ -5,7 +5,6 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ForumService } from '../../services/forum.service';
 
-
 @Component({
   selector: 'app-forum',
   standalone: true,
@@ -31,6 +30,10 @@ export class ForumComponent implements OnInit {
   selectedPost: any = null;
   comments: any[] = [];
   newCommentText = '';
+
+  // Переменные для редактирования
+  editingCommentId: number | null = null;
+  editCommentText = '';
 
   searchText = '';
 
@@ -65,7 +68,6 @@ export class ForumComponent implements OnInit {
     }, 2500);
   }
 
-
   loadForumData(): void {
     this.loading = true;
     this.errorMessage = '';
@@ -99,7 +101,6 @@ export class ForumComponent implements OnInit {
     });
   }
 
-
   filterByCategory(categoryName: string): void {
     this.selectedCategory = categoryName;
 
@@ -122,9 +123,6 @@ export class ForumComponent implements OnInit {
     const found = this.categories.find((category: any) => category.id == categoryId);
     return found ? found.name : '';
   }
-
-  
-
 
   clearCategoryFilter(): void {
     this.selectedCategory = '';
@@ -162,7 +160,6 @@ export class ForumComponent implements OnInit {
     });
   }
 
-
   likePost(post: any): void {
     if (!this.authService.isLoggedIn()) {
       this.showToast('Need to login to tap "like"', 'error');
@@ -179,7 +176,6 @@ export class ForumComponent implements OnInit {
           this.selectedPost.liked = data.liked;
         }
 
-        this.showToast(data.liked ? 'Liked' : 'Un liked', 'success');
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -192,6 +188,7 @@ export class ForumComponent implements OnInit {
   async openPost(post: any): Promise<void> {
     this.selectedPost = post;
     this.newCommentText = '';
+    this.editingCommentId = null;
     await this.loadComments(post.id);
   }
 
@@ -199,6 +196,8 @@ export class ForumComponent implements OnInit {
     this.selectedPost = null;
     this.comments = [];
     this.newCommentText = '';
+    this.editingCommentId = null;
+    this.cdr.detectChanges(); 
   }
 
   loadComments(postId: number): void {
@@ -210,17 +209,10 @@ export class ForumComponent implements OnInit {
       },
       error: (error) => {
         console.error('COMMENTS LOAD ERROR:', error);
-        this.showToast('Error to commit', 'error');
+        this.showToast('Error loading comments', 'error');
       }
     });
   }
-
-
-  toggleLike(post: any, event: Event) {
-    event.stopPropagation();
-    console.log('like clicked');
-  }
-
 
   sendComment(): void {
     if (!this.selectedPost) return;
@@ -248,6 +240,38 @@ export class ForumComponent implements OnInit {
       error: (error) => {
         console.error('COMMENT ERROR:', error);
         this.showToast('Unable to leave a comment', 'error');
+      }
+    });
+  }
+
+  startEditComment(comment: any): void {
+    this.editingCommentId = comment.id;
+    this.editCommentText = comment.text;
+    this.cdr.detectChanges(); 
+  }
+
+  cancelEdit(): void {
+    this.editingCommentId = null;
+    this.editCommentText = '';
+    this.cdr.detectChanges(); 
+  }
+
+  saveEditComment(commentId: number): void {
+    if (!this.editCommentText.trim()) {
+      this.showToast('Comment cannot be empty', 'error');
+      return;
+    }
+
+    this.forumService.updateComment(commentId, { text: this.editCommentText }).subscribe({
+      next: () => {
+        this.showToast('Comment updated', 'success');
+        this.cancelEdit();
+        this.loadComments(this.selectedPost.id);
+      },
+      error: (err: any) => {
+        console.error('EDIT COMMENT ERROR', err);
+        this.showToast('Failed to edit comment', 'error');
+        this.cdr.detectChanges(); 
       }
     });
   }

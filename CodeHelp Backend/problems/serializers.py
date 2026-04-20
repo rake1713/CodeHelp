@@ -74,11 +74,12 @@ class SubmissionModelSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     author_username = serializers.CharField(source='author.username', read_only=True)
     replies = serializers.SerializerMethodField()
+    is_edited = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'post', 'author_username', 'text', 'parent', 'replies', 'created_at']
-        read_only_fields = ['author']
+        fields = ['id', 'post', 'author_username', 'text', 'parent', 'replies', 'created_at', 'updated_at', 'is_edited']
+        read_only_fields = ['author', 'created_at', 'updated_at']
 
     def validate(self, attrs):
         parent = attrs.get('parent')
@@ -95,6 +96,12 @@ class CommentSerializer(serializers.ModelSerializer):
             child_context = {**self.context, 'reply_depth': depth - 1}
             return CommentSerializer(obj.replies.all(), many=True, context=child_context).data
         return []
+
+    def get_is_edited(self, obj):
+        if obj.updated_at and obj.created_at:
+            time_difference = obj.updated_at - obj.created_at
+            return time_difference.total_seconds() > 1
+        return False
 
 
 class PostSerializer(serializers.ModelSerializer):

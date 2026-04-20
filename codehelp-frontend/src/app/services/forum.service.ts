@@ -35,4 +35,8 @@ export class ForumService {
   createComment(data: { post: number; text: string }): Observable<any> {
     return this.http.post(this.commentsUrl, data);
   }
+updateComment(commentId: number, data: { text: string }) {
+    // Внимание на URL! Спроси у бэкендера точный адрес для редактирования.
+    return this.http.patch(`http://127.0.0.1:8000/api/comments/${commentId}/`, data);
+  }
 }
