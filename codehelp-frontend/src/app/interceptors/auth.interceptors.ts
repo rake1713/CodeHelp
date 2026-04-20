@@ -10,7 +10,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Игнорируем запросы на авторизацию, чтобы не прикреплять туда токен
   const isAuthRequest = req.url.includes('/login/') || 
                         req.url.includes('/register/') || 
-                        req.url.includes('/token/refresh/');
+                        req.url.includes('/login/refresh/');
 
   let authReq = req;
   
