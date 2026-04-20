@@ -1,65 +1,77 @@
-import { Component, Inject, OnInit, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { SubmissionService } from '../../services/submission.service';
 import { AuthService } from '../../services/auth.service';
+import { ProblemService } from '../../services/problem.service';
+import { SubmissionService } from '../../services/submission.service';
 
 @Component({
   selector: 'app-my-submissions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, DatePipe],
   templateUrl: './my-submissions.component.html',
-  styleUrls: ['./my-submissions.component.css']
+  styleUrl: './my-submissions.component.css'
 })
 export class MySubmissionsComponent implements OnInit {
+  user: any = null;
+  stats: any = null;
   submissions: any[] = [];
+  
   loading = true;
-  errorMessage = '';
-  isBrowser = false;
+  expandedSubmissionId: number | null = null;
 
   constructor(
-    private submissionService: SubmissionService,
     public authService: AuthService,
-    private cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-  }
+    private problemService: ProblemService,
+    private submissionService: SubmissionService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    if (!this.isBrowser) {
-      this.loading = false;
-      return;
-    }
-    this.loadMySubmissions();
+    this.loadData();
   }
 
-  // 👇 Вот этот блок обязательно должен быть ЗДЕСЬ, внутри класса!
-  get avatarLetter(): string {
-    const name = this.authService.getUsername();
-    return name ? name.charAt(0).toUpperCase() : 'U';
-  }
-  // 👆 
+  loadData(): void {
+    this.loading = true;
+    let userLoaded = false, statsLoaded = false, subsLoaded = false;
 
-  loadMySubmissions(): void {
-    this.submissionService.getMySubmissions().subscribe({
-      next: (data: any) => {
-        this.submissions = Array.isArray(data) ? data : (data.results || []);
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.errorMessage = 'Failed to load your submissions.';
+    const checkLoading = () => {
+      if (userLoaded && statsLoaded && subsLoaded) {
         this.loading = false;
         this.cdr.detectChanges();
       }
+    };
+
+    // 1. Профиль
+    this.authService.getProfile().subscribe({
+      next: (userData: any) => {
+        this.user = userData;
+        userLoaded = true; checkLoading();
+      },
+      error: (err: any) => { userLoaded = true; checkLoading(); }
+    });
+
+    // 2. Статистика
+    this.problemService.getMyStats().subscribe({
+      next: (statsData: any) => {
+        this.stats = statsData;
+        statsLoaded = true; checkLoading();
+      },
+      error: (err: any) => { statsLoaded = true; checkLoading(); }
+    });
+
+    // 3. Решения
+    this.submissionService.getMySubmissions().subscribe({
+      next: (subData: any) => {
+        this.submissions = subData.results || subData;
+        subsLoaded = true; checkLoading();
+      },
+      error: (err: any) => { subsLoaded = true; checkLoading(); }
     });
   }
 
-  getStatusClass(status: string): string {
-    const s = status?.toLowerCase() || '';
-    if (s.includes('accepted')) return 'success';
-    if (s.includes('wrong') || s.includes('error')) return 'error';
-    return 'warning';
+  // --- ЛОГИКА РЕШЕНИЙ ---
+  toggleSubmission(id: number): void {
+    this.expandedSubmissionId = this.expandedSubmissionId === id ? null : id;
   }
 }

@@ -1,54 +1,108 @@
 <div class="page-container">
+
   @if (loading) {
-    <div class="status-message">Loading profile data...</div>
-  } @else if (errorMessage) {
-    <div class="status-message error-text">{{ errorMessage }}</div>
+    <div class="info-box">Loading your dashboard...</div>
   } @else {
-    <header class="profile-header">
-      <div class="header-left">
-        <div class="profile-avatar">{{ avatarLetter }}</div>
-        <div>
-          <h1>Account Settings</h1>
-          <p>Logged in as <strong>{{ authService.getUsername() }}</strong></p>
+    
+    <section class="dashboard-top">
+      
+      <div class="profile-card">
+        <div class="avatar-large">{{ (user?.first_name || user?.username || 'U').charAt(0).toUpperCase() }}</div>
+        
+        <div class="profile-info">
+          <h2 class="user-display-name">
+            {{ (user?.first_name || user?.last_name) ? (user.first_name + ' ' + (user.last_name || '')) : user?.username }}
+          </h2>
+          
+          <p class="user-rank">Student</p>
+          <p class="user-email">{{ user?.email }}</p>
         </div>
       </div>
-      <button class="btn-outline">Edit Profile</button>
-    </header>
 
-    <div class="stats-row">
-      <div class="stat-card">
-        <span class="label">Total Submissions</span>
-        <span class="value">{{ submissions.length }}</span>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">{{ stats?.total_submissions || 0 }}</div>
+          <div class="stat-label">Total Attempts</div>
+        </div>
+        <div class="stat-card success-card">
+          <div class="stat-value">{{ stats?.accepted || 0 }}</div>
+          <div class="stat-label">Problems Solved</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ stats?.acceptance_rate || 0 }}%</div>
+          <div class="stat-label">Acceptance Rate</div>
+        </div>
       </div>
-      <div class="stat-card">
-        <span class="label">Current Rank</span>
-        <span class="value">Student</span>
+
+    </section>
+
+    <div class="section-divider">
+      <div class="divider-line"></div>
+      <div class="divider-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
       </div>
+      <div class="divider-line"></div>
     </div>
 
-    <section class="activity-section">
-      <h3 class="section-title">Recent Activity</h3>
-      
-      @if (!submissions || submissions.length === 0) {
-        <div class="empty-state">No submissions yet. Start solving problems!</div>
-      }
+    <section class="dashboard-bottom">
+      <h2 class="section-title">My Submissions</h2>
 
-      <div class="submission-list">
-        @for (sub of submissions; track sub.id) {
-          <div class="submission-item">
-            <div class="sub-left">
-              <div class="status-indicator" [ngClass]="getStatusClass(sub?.status)"></div>
-              <div class="sub-info">
-                <h4>{{ sub?.problem_name || 'Problem #' + sub?.problem }}</h4>
-                <p>Language: {{ sub?.language }} • {{ sub?.created_at | date:'MMM d, y' }}</p>
+      @if (submissions.length === 0) {
+        <div class="empty-state">You haven't submitted any solutions yet. Go solve some problems!</div>
+      } @else {
+        <div class="submissions-list">
+          
+          @for (sub of submissions; track sub.id) {
+            <div class="submission-item" [class.expanded]="expandedSubmissionId === sub.id">
+              
+              <div class="submission-header" (click)="toggleSubmission(sub.id)">
+                <div class="sub-info">
+                  <span class="status-indicator" 
+                        [class.success]="sub.status === 'Accepted'"
+                        [class.warning]="sub.status === 'Pending'"
+                        [class.error]="sub.status !== 'Accepted' && sub.status !== 'Pending'">
+                  </span>
+                  <a [routerLink]="['/problems', sub.problem]" class="problem-name" (click)="$event.stopPropagation()">
+                    {{ sub.problem_title || 'Task #' + sub.problem }}
+                  </a>
+                </div>
+                
+                <div class="sub-meta">
+                  <span class="status-text"
+                        [class.text-success]="sub.status === 'Accepted'"
+                        [class.text-error]="sub.status !== 'Accepted' && sub.status !== 'Pending'">
+                    {{ sub.status }}
+                  </span>
+                  <span class="lang-badge">{{ sub.language }}</span>
+                  <span class="sub-date">{{ sub.created_at | date:'MMM d, HH:mm' }}</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron" [class.rotated]="expandedSubmissionId === sub.id">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
               </div>
+
+              @if (expandedSubmissionId === sub.id) {
+                <div class="submission-details">
+                  <div class="detail-section">
+                    <h4 class="detail-title">Output / Error Details</h4>
+                    <pre class="console-output" [class.success-text]="sub.status === 'Accepted'">{{ sub.status_details || 'No details available.' }}</pre>
+                  </div>
+
+                  <div class="detail-section mt-3">
+                    <h4 class="detail-title">Submitted Code</h4>
+                    <pre class="code-preview"><code>{{ sub.code }}</code></pre>
+                  </div>
+                </div>
+              }
             </div>
-            <span [ngClass]="['badge-' + getStatusClass(sub?.status)]">
-              {{ sub?.status }}
-            </span>
-          </div>
-        }
-      </div>
+          }
+
+        </div>
+      }
     </section>
+
   }
 </div>

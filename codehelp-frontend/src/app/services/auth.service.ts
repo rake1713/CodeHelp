@@ -1,6 +1,6 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -17,6 +17,30 @@ export class AuthService {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
+  // ==========================================
+  // НОВЫЕ МЕТОДЫ (Исправленные)
+  // ==========================================
+  
+  getAuthHeaders(): HttpHeaders {
+    const token = this.getAccessToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: token ? `Bearer ${token}` : ''
+    });
+  }
+
+  getProfile(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/profile/`, { headers: this.getAuthHeaders() });
+  }
+
+  updateProfile(data: { first_name: string; last_name: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/profile/`, data, { headers: this.getAuthHeaders() });
+  }
+
+  // ==========================================
+  // СТАРЫЕ МЕТОДЫ (Остаются без изменений)
+  // ==========================================
+
   tryRestoreSession(): Observable<any> | null {
     const access = this.getAccessToken();
     const refresh = this.getRefreshToken();
@@ -31,8 +55,6 @@ export class AuthService {
 
     return null;
   }
-
-
 
   // Логин
   login(data: { username: string; password: string }): Observable<any> {

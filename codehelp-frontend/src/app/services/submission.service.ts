@@ -1,24 +1,34 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubmissionService {
-  private base = 'http://127.0.0.1:8000/api';
+  // Убедись, что адрес бэкенда правильный (обычно это 8000 порт)
+  private apiUrl = 'http://127.0.0.1:8000/api/'; 
 
   constructor(private http: HttpClient) {}
 
-  createSubmission(data: { problem: number; code: string; language: string }): Observable<any> {
-    return this.http.post(`${this.base}/submissions/`, data);
+  // Вспомогательная функция для добавления токена
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('access');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: token ? `Bearer ${token}` : ''
+    });
+  }
+
+  runCode(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}run-code/`, data, { headers: this.getAuthHeaders() });
+  }
+
+  createSubmission(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}submissions/`, data, { headers: this.getAuthHeaders() });
   }
 
   getMySubmissions(): Observable<any> {
-    return this.http.get(`${this.base}/submissions/`);
-  }
-
-  runCode(data: { code: string; language: string; stdin: string }): Observable<any> {
-    return this.http.post(`${this.base}/run/`, data);
+    return this.http.get(`${this.apiUrl}submissions/`, { headers: this.getAuthHeaders() });
   }
 }
