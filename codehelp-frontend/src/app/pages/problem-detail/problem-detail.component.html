@@ -1,5 +1,5 @@
 @if (loading) {
-  <div class="state-box">Loading problems...</div>
+  <div class="state-box info">Loading problem details...</div>
 }
 
 @if (errorMessage) {
@@ -8,73 +8,97 @@
 
 @if (!loading && problem) {
   <div class="problem-page">
+    
     <div class="left-panel">
       <div class="tab-bar">
         <span class="active-tab">Description</span>
       </div>
 
-      <div class="problem-content">
-        <a routerLink="/problems" class="back-link">← Back to problems</a>
+  <div class="problem-content">
+  <a routerLink="/problems" class="back-link">
+    <svg 
+      class="back-icon" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      stroke-width="2" 
+      stroke-linecap="round" 
+      stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <span>Back to problems</span>
+  </a>
 
         <h1 class="problem-title">{{ problem.title }}</h1>
 
         <div class="tag-row">
-          <span class="tag easy">{{ problem.difficulty }}</span>
-          <span class="tag">{{ problem.category_name }}</span>
+          <span class="tag difficulty" 
+                [class.easy]="problem.difficulty === 'Easy'"
+                [class.medium]="problem.difficulty === 'Medium'"
+                [class.hard]="problem.difficulty === 'Hard'">
+            {{ problem.difficulty }}
+          </span>
+          <span class="tag category">{{ problem.category_name || 'General' }}</span>
         </div>
 
         <p class="problem-description">{{ problem.description }}</p>
 
         <div class="example-box">
-          <div class="example-title">Input</div>
+          <div class="example-title">Input Example</div>
           <div class="example-text">{{ problem.input_example }}</div>
         </div>
 
         <div class="example-box">
-          <div class="example-title">Output</div>
+          <div class="example-title">Output Example</div>
           <div class="example-text">{{ problem.output_example }}</div>
         </div>
       </div>
     </div>
 
     <div class="right-panel">
+      
       <div class="editor-topbar">
-        <select
-          class="language-select"
-          [(ngModel)]="selectedLanguage"
-          (change)="onLanguageChange()">
+        <select class="language-select" [(ngModel)]="selectedLanguage" (change)="onLanguageChange()">
           <option value="python">Python</option>
           <option value="cpp">C++</option>
           <option value="java">Java</option>
         </select>
 
-        <button class="reset-btn" (click)="resetCode()">Reset</button>
+        <button class="reset-btn" (click)="resetCode()">
+          <span class="icon">↺</span> Reset Code
+        </button>
       </div>
 
       <div class="editor-wrapper">
         <textarea
           class="real-code-editor"
           [(ngModel)]="code"
-          spellcheck="false">
+          spellcheck="false"
+          placeholder="Write your code here...">
         </textarea>
       </div>
 
       <div class="result-panel">
-        <div class="result-header">Result</div>
-        <div class="result-content">{{ outputText }}</div>
+        <div class="result-header">Console Output</div>
+        <div class="result-content" [class.empty]="!outputText">
+          {{ outputText || 'Run your code to see the output here...' }}
+        </div>
       </div>
 
       <div class="bottom-actions">
         <span class="status-text">
-          {{ submitting ? 'Sending...' : 'Ready to send' }}
+          <span class="status-dot" [class.sending]="submitting"></span>
+          {{ submitting ? 'Running your code...' : 'Ready to submit' }}
         </span>
 
         <div class="button-group">
           <button class="primary-btn" (click)="submitCode()" [disabled]="submitting">
-            {{ submitting ? 'Sending...' : 'Send' }}
+            {{ submitting ? 'Submitting...' : 'Submit Solution' }}
           </button>
         </div>
       </div>
+
     </div>
   </div>
 }
