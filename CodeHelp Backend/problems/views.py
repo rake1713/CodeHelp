@@ -73,8 +73,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Submission.objects.all()
-        return Submission.objects.filter(user=self.request.user)
+            return Submission.objects.all().order_by('-created_at')
+        return Submission.objects.filter(user=self.request.user).order_by('-created_at')
 
     def create(self, request, *args, **kwargs):
         input_serializer = SubmissionCreateSerializer(data=request.data)
@@ -174,6 +174,17 @@ def my_stats(request):
         'acceptance_rate': round(accepted / total * 100, 1) if total else 0,
         'by_language': list(by_language),
     })
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def my_last_submission(request, problem_id):
+    submission = Submission.objects.filter(
+        user=request.user, problem_id=problem_id
+    ).order_by('-created_at').first()
+    if submission:
+        return Response({'code': submission.code, 'language': submission.language})
+    return Response(None)
 
 
 class ProblemDetailView(APIView):

@@ -17,6 +17,7 @@ from .views import (
     RunCodeView,
     search_problems,
     my_stats,
+    my_last_submission,
 )
 
 router = DefaultRouter()
@@ -38,4 +39,6 @@ urlpatterns = [
     path('problems/search/', search_problems, name='problem-search'),
     path('stats/', my_stats, name='my-stats'),
     path('run/', RunCodeView.as_view(), name='run-code'),
+    path('run-code/', RunCodeView.as_view(), name='run-code-alias'),
+    path('problems/<int:problem_id>/last-submission/', my_last_submission, name='last-submission'),
 ]

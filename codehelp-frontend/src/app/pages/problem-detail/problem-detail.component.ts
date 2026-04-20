@@ -73,7 +73,21 @@ export class ProblemDetailComponent implements OnInit, AfterViewInit, OnDestroy 
         this.loading = false;
         this.problemLoaded = true;
         this.cdr.detectChanges();
-        this.initMonaco();
+
+        if (this.authService.isLoggedIn()) {
+          this.submissionService.getLastSubmission(id).subscribe({
+            next: (last) => {
+              if (last?.code) {
+                this.code = last.code;
+                this.selectedLanguage = last.language || this.selectedLanguage;
+              }
+              setTimeout(() => this.initMonaco(), 0);
+            },
+            error: () => setTimeout(() => this.initMonaco(), 0)
+          });
+        } else {
+          setTimeout(() => this.initMonaco(), 0);
+        }
       },
       error: () => {
         this.errorMessage = 'Failed to load task';
@@ -84,7 +98,7 @@ export class ProblemDetailComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit(): void {
-    if (this.problemLoaded) this.initMonaco();
+    if (this.problemLoaded) setTimeout(() => this.initMonaco(), 0);
   }
 
   private initMonaco(): void {

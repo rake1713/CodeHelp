@@ -32,7 +32,7 @@ def run_submission(submission):
     test_cases = problem.test_cases.all()
 
     if not test_cases:
-        return "No Test Cases", "Админ ещё не добавил тесты для этой задачи."
+        return "Runtime Error", "Админ ещё не добавил тесты для этой задачи."
 
     for index, test in enumerate(test_cases, 1):
         try:
@@ -76,7 +76,7 @@ def run_submission(submission):
                     run_command = ['java', '-cp', tmpdir, 'Main']
 
                 else:
-                    return "Error", f"Неизвестный язык: {submission.language}"
+                    return "Runtime Error", f"Неизвестный язык: {submission.language}"
                 run_kwargs = {
                     'input': test.input_data,
                     'text': True,
@@ -110,7 +110,7 @@ def run_submission(submission):
         except subprocess.TimeoutExpired:
             return "Time Limit Exceeded", f"Тест #{index}: превышено время ожидания (2 сек)."
         except Exception as e:
-            return "Error", f"Системная ошибка: {str(e)}"
+            return "Runtime Error", f"Системная ошибка: {str(e)}"
 
     return "Accepted", "Все тесты пройдены успешно!"
 

@@ -23,20 +23,7 @@ export class ProblemsComponent implements OnInit {
   selectedCategory = '';
   searchText = '';
 
-  categories: string[] = [
-    'Algorithms',
-    'Array',
-    'Basics',
-    'Conditions',
-    'Loops',
-    'Arrays',
-    'Strings',
-    'Functions',
-    'Recursion',
-    'Sorting',
-    'Data Structures',
-    'Geometry'
-  ];
+  categories: string[] = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -47,6 +34,7 @@ export class ProblemsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProblems();
+    this.loadCategories();
 
     // Слушаем параметры из URL (с главной страницы)
     this.route.queryParams.subscribe(params => {
@@ -68,6 +56,17 @@ export class ProblemsComponent implements OnInit {
       }
     });
   }
+  loadCategories(): void {
+    this.problemService.getCategories().subscribe({
+      next: (data: any) => {
+        const list = Array.isArray(data) ? data : (data.results || []);
+        this.categories = list.map((c: any) => c.name);
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Categories load error:', err)
+    });
+  }
+
   loadProblems(): void {
     this.loading = true;
     this.errorMessage = '';
@@ -117,5 +116,7 @@ export class ProblemsComponent implements OnInit {
 
       return matchesDifficulty && matchesCategory && matchesSearch;
     });
+
+    this.cdr.detectChanges();
   }
 }
