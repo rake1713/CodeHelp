@@ -2,6 +2,7 @@ import subprocess
 import tempfile
 import os
 import sys
+
 if sys.platform != 'win32':
     import resource
 else:
@@ -40,11 +41,16 @@ def run_submission(submission):
                     file_path = os.path.join(tmpdir, "solution.py")
                     with open(file_path, 'w', encoding='utf-8') as f:
                         f.write(submission.code)
-                    run_command = ['python3', '-I', file_path]
+                    
+                    python_cmd = 'python' if sys.platform == 'win32' else 'python3'
+                    run_command = [python_cmd, '-I', file_path]
 
                 elif submission.language == 'cpp':
                     file_path = os.path.join(tmpdir, "main.cpp")
                     exe_path = os.path.join(tmpdir, "main.out")
+                    if sys.platform == 'win32':
+                        exe_path += '.exe'
+                        
                     with open(file_path, 'w', encoding='utf-8') as f:
                         f.write(submission.code)
 
@@ -72,16 +78,23 @@ def run_submission(submission):
                 else:
                     return "Error", f"Неизвестный язык: {submission.language}"
 
-                process = subprocess.run(
-                    run_command,
-                    input=test.input_data,
-                    text=True,
-                    capture_output=True,
-                    timeout=2,
-                    env=SAFE_ENV,
-                    close_fds=True,
-                    preexec_fn=_apply_resource_limits,
-                )
+                # ==========================================
+                # БЕЗОПАСНЫЙ ЗАПУСК ДЛЯ SUBMISSION
+                # ==========================================
+                run_kwargs = {
+                    'input': test.input_data,
+                    'text': True,
+                    'capture_output': True,
+                    'timeout': 2,
+                    'env': SAFE_ENV,
+                    'close_fds': True,
+                }
+
+                if sys.platform != 'win32':
+                    run_kwargs['preexec_fn'] = _apply_resource_limits
+
+                process = subprocess.run(run_command, **run_kwargs)
+                # ==========================================
 
                 stdout = process.stdout[:10_000]
 
@@ -118,13 +131,19 @@ def run_code_with_input(code, language, stdin):
                 file_path = os.path.join(tmpdir, "solution.py")
                 with open(file_path, 'w', encoding='utf-8') as f:
                     f.write(code)
-                run_command = ['python3', '-I', file_path]
+                    
+                python_cmd = 'python' if sys.platform == 'win32' else 'python3'
+                run_command = [python_cmd, '-I', file_path]
 
             elif language == 'cpp':
                 file_path = os.path.join(tmpdir, "main.cpp")
                 exe_path = os.path.join(tmpdir, "main.out")
+                if sys.platform == 'win32':
+                    exe_path += '.exe'
+                    
                 with open(file_path, 'w', encoding='utf-8') as f:
                     f.write(code)
+                    
                 compile_res = subprocess.run(
                     ['g++', '-O2', '-o', exe_path, file_path],
                     capture_output=True, text=True, timeout=10
@@ -137,6 +156,7 @@ def run_code_with_input(code, language, stdin):
                 file_path = os.path.join(tmpdir, "Main.java")
                 with open(file_path, 'w', encoding='utf-8') as f:
                     f.write(code)
+                    
                 compile_res = subprocess.run(
                     ['javac', file_path],
                     capture_output=True, text=True, timeout=15
@@ -148,16 +168,23 @@ def run_code_with_input(code, language, stdin):
             else:
                 return False, f"Неизвестный язык: {language}"
 
-            process = subprocess.run(
-                run_command,
-                input=stdin or '',
-                text=True,
-                capture_output=True,
-                timeout=5,
-                env=SAFE_ENV,
-                close_fds=True,
-                preexec_fn=_apply_resource_limits,
-            )
+            # ==========================================
+            # БЕЗОПАСНЫЙ ЗАПУСК ДЛЯ КНОПКИ RUN
+            # ==========================================
+            run_kwargs = {
+                'input': stdin or '',
+                'text': True,
+                'capture_output': True,
+                'timeout': 5,
+                'env': SAFE_ENV,
+                'close_fds': True,
+            }
+
+            if sys.platform != 'win32':
+                run_kwargs['preexec_fn'] = _apply_resource_limits
+
+            process = subprocess.run(run_command, **run_kwargs)
+            # ==========================================
 
             if process.returncode != 0:
                 return False, process.stderr[:500] or "Runtime Error"
