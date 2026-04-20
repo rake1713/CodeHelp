@@ -77,10 +77,6 @@ def run_submission(submission):
 
                 else:
                     return "Error", f"Неизвестный язык: {submission.language}"
-
-                # ==========================================
-                # БЕЗОПАСНЫЙ ЗАПУСК ДЛЯ SUBMISSION
-                # ==========================================
                 run_kwargs = {
                     'input': test.input_data,
                     'text': True,
@@ -94,8 +90,6 @@ def run_submission(submission):
                     run_kwargs['preexec_fn'] = _apply_resource_limits
 
                 process = subprocess.run(run_command, **run_kwargs)
-                # ==========================================
-
                 stdout = process.stdout[:10_000]
 
                 if process.returncode != 0:
@@ -167,10 +161,6 @@ def run_code_with_input(code, language, stdin):
 
             else:
                 return False, f"Неизвестный язык: {language}"
-
-            # ==========================================
-            # БЕЗОПАСНЫЙ ЗАПУСК ДЛЯ КНОПКИ RUN
-            # ==========================================
             run_kwargs = {
                 'input': stdin or '',
                 'text': True,
@@ -182,10 +172,7 @@ def run_code_with_input(code, language, stdin):
 
             if sys.platform != 'win32':
                 run_kwargs['preexec_fn'] = _apply_resource_limits
-
             process = subprocess.run(run_command, **run_kwargs)
-            # ==========================================
-
             if process.returncode != 0:
                 return False, process.stderr[:500] or "Runtime Error"
 
