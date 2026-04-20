@@ -31,4 +31,8 @@ export class SubmissionService {
   getMySubmissions(): Observable<any> {
     return this.http.get(`${this.apiUrl}submissions/`, { headers: this.getAuthHeaders() });
   }
+
+  getLastSubmission(problemId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}problems/${problemId}/last-submission/`, { headers: this.getAuthHeaders() });
+  }
 }

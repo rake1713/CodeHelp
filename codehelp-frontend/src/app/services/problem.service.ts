@@ -22,11 +22,15 @@ export class ProblemService {
     return this.http.get(`${this.apiUrl}problems/`);
   }
 
+  getCategories(): Observable<any> {
+    return this.http.get(`${this.apiUrl}categories/`);
+  }
+
   getProblem(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}problems/${id}/`);
   }
 
   getMyStats(): Observable<any> {
-    return this.http.get(`${this.apiUrl}my_stats/`, { headers: this.getAuthHeaders() });
+    return this.http.get(`${this.apiUrl}stats/`, { headers: this.getAuthHeaders() });
   }
 }

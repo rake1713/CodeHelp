@@ -95,5 +95,4 @@ export class ProblemsComponent implements OnInit {
 
       return matchesDifficulty && matchesCategory && matchesSearch;
     });
-  }
-}
+s.cdr.detectChanges();

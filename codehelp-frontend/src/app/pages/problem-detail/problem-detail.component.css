@@ -382,6 +382,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  margin-right: 10px;
 }
 .run-btn:hover:not(:disabled) { background: #1e3a2a; border-color: #3a6a50; }
 .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }

@@ -93,6 +93,10 @@ export class AuthService {
 
   logout(): void {
     if (this.isBrowser) {
+      const refresh = this.getRefreshToken();
+      if (refresh) {
+        this.http.post(`${this.apiUrl}/logout/`, { refresh }, { headers: this.getAuthHeaders() }).subscribe();
+      }
       localStorage.removeItem('access');
       localStorage.removeItem('refresh');
       localStorage.removeItem('username');
