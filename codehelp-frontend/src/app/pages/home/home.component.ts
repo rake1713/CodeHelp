@@ -1,24 +1,28 @@
-import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  // Получаем доступ к HTML-элементу input
-  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  searchQuery: string = '';
 
-  // Слушаем нажатия клавиш на всей странице
-  @HostListener('window:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    // Проверяем: нажата ли кнопка Ctrl (или Cmd на Mac) И кнопка 'k'
-    if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
-      event.preventDefault(); // Блокируем стандартное поведение браузера (чтобы он не открывал свою строку поиска)
-      this.searchInput.nativeElement.focus(); // Ставим курсор в наш инпут
+  constructor(private router: Router) {}
+
+  onSearch(): void {
+    if (this.searchQuery.trim()) {
+      // Перенаправляем на Problems и передаем параметр поиска в URL
+      this.router.navigate(['/problems'], { queryParams: { q: this.searchQuery.trim() } });
     }
+  }
+
+  exploreLanguage(lang: string): void {
+    // Перенаправляем на Problems и сразу включаем фильтр по категории
+    this.router.navigate(['/problems'], { queryParams: { category: lang } });
   }
 }

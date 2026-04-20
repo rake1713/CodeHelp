@@ -1,229 +1,300 @@
 /* =========================================
-   1. LAYOUT & CONTAINER (Главная сетка)
+   1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ
    ========================================= */
-.home-layout {
+.home-container {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 60px);
-  width: 100%; /* Растягиваем на всю ширину */
+  background: var(--bg-color);
+  min-height: 100vh;
 }
 
-.main-content {
-  flex: 1;
+.section-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.section-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   2. HERO SECTION
+   ========================================= */
+.hero-section {
+  padding: 100px 20px 80px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  background: radial-gradient(circle at top center, #ffffff, #f9fafb);
+}
+
+.hero-content {
+  max-width: 700px;
   width: 100%;
 }
-/* =========================================
-   2. HERO SECTION (Заголовок и текст)
-   ========================================= */
-.hero { 
-  text-align: center; /* Возвращаем центрирование текста */
-  margin-bottom: 60px; 
-  padding-top: 0; 
-}
 
-
-.badge {
+.hero-badge {
   display: inline-block;
-  padding: 6px 14px;
-  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-secondary);
   border-radius: 100px;
-  font-size: 12px;
-  color: var(--text-primary);
-  background: var(--surface-color);
-  margin-bottom: 24px;
+  font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
 }
 
-.hero h1 {
+.hero-title {
   font-size: 56px;
   font-weight: 800;
   letter-spacing: -0.04em;
-  color: var(--text-primary);
   line-height: 1.1;
+  color: var(--text-primary);
   margin-bottom: 24px;
 }
 
-.hero p {
+.hero-subtitle {
   font-size: 18px;
   color: var(--text-secondary);
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+/* Строка поиска */
+.search-wrapper {
+  position: relative;
+  display: flex;
   max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  border-radius: 12px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  padding: 6px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: var(--text-secondary);
+}
+
+.hero-search {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 14px 14px 14px 48px;
+  font-size: 16px;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.search-btn {
+  background: var(--text-primary);
+  color: white;
+  border: none;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+}
+
+.search-btn:hover { background: #1f2937; }
+.search-btn:active { transform: scale(0.98); }
+
+/* =========================================
+   3. ТЕМЫ / ЯЗЫКИ (TOPICS)
+   ========================================= */
+.topics-section {
+  padding: 80px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.topic-card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  padding: 20px 24px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.topic-card:hover {
+  border-color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  transform: translateY(-2px);
+}
+
+.topic-name { font-weight: 600; font-size: 16px; color: var(--text-primary); }
+.topic-arrow { color: var(--text-secondary); transition: transform 0.2s; }
+.topic-card:hover .topic-arrow { transform: translateX(4px); color: var(--text-primary); }
+
+/* =========================================
+   4. ABOUT & FEATURES
+   ========================================= */
+.about-section {
+  padding: 80px 20px;
+  background: #fdfdfd;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.about-header { text-align: center; margin-bottom: 48px; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto 48px;
+}
+
+.feature-card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  padding: 32px 24px;
+  border-radius: 16px;
+  text-align: left;
+}
+
+.feature-icon { font-size: 28px; margin-bottom: 16px; }
+.feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+.tech-stack {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.tech-label { font-weight: 600; font-size: 14px; color: var(--text-secondary); margin-right: 8px; }
+.tech-badge {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* =========================================
+   5. TEAM SECTION
+   ========================================= */
+.team-section {
+  padding: 80px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.team-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  border-radius: 16px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.team-card:hover {
+  border-color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.team-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.team-info { display: flex; flex-direction: column; }
+.team-name { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+.team-role { font-size: 13px; color: var(--text-secondary); }
+
+/* =========================================
+   6. FOOTER
+   ========================================= */
+.home-footer {
+  border-top: 1px solid var(--border-color);
+  background: var(--surface-color);
+  padding: 60px 20px 20px;
+  margin-top: auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+  max-width: 1000px;
   margin: 0 auto 40px;
 }
 
-/* =========================================
-   3. SEARCH BAR (Поиск)
-   ========================================= */
-.search-wrapper {
-  position: relative;
-  max-width: 480px;
-  margin: 0 auto;
-}
+.footer-brand h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; }
+.footer-brand .logo-light { font-weight: 500; color: var(--text-secondary); }
+.footer-brand p { color: var(--text-secondary); font-size: 14px; }
 
-.search-input {
-  width: 100%;
-  background: var(--surface-color);
-  border: 1px solid var(--border-color);
-  padding: 16px 20px;
-  border-radius: 12px;
-  color: var(--text-primary);
-  outline: none;
-  font-size: 15px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-  transition: all 0.2s;
-}
-
-.search-input:focus {
-  border-color: var(--text-primary);
-  box-shadow: 0 0 0 1px var(--text-primary);
-}
-
-.search-wrapper kbd {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--bg-color);
-  border: 1px solid var(--border-color);
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  font-family: monospace;
-}
-
-/* =========================================
-   4. LANGUAGES & CARDS (Карточки)
-   ========================================= */
-.section-title {
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* СТРОГО 3 широкие колонки */
-  gap: 24px;
-  width: 100%;
-}
-
-.card {
-  background: var(--surface-color);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 32px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Плавная анимация */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  border-color: #d1d5db;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.04); /* Дорогая премиальная тень */
-}
-
-.icon { font-size: 36px; display: block; margin-bottom: 20px; }
-.card h4 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-.card p { color: var(--text-secondary); font-size: 15px; line-height: 1.5; }
-
-/* =========================================
-   5. FOOTER (Подвал)
-   ========================================= */
-.app-footer {
-  border-top: 1px solid var(--border-color);
-  background: var(--surface-color);
-  padding: 48px 24px 24px;
-}
-
-.footer-content {
-  max-width: 1100px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 40px;
-  margin-bottom: 48px;
-}
-
-.footer-brand .logo {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-.footer-brand .logo-light {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.footer-desc {
-  color: var(--text-secondary);
-  font-size: 14px;
-  margin-top: 12px;
-  max-width: 300px;
-}
-
-.footer-links {
-  display: flex;
-  gap: 80px;
-}
-
-.link-column h4 {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 16px;
-}
-
-.link-column a {
-  display: block;
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 14px;
-  margin-bottom: 12px;
-  transition: color 0.2s;
-}
-
-.link-column a:hover {
-  color: var(--text-primary);
-}
+.footer-links h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; color: var(--text-primary); }
+.footer-links a { display: block; color: var(--text-secondary); text-decoration: none; font-size: 14px; margin-bottom: 12px; transition: color 0.2s; }
+.footer-links a:hover { color: var(--text-primary); }
 
 .footer-bottom {
-  max-width: 1100px;
-  margin: 0 auto;
   border-top: 1px solid var(--border-color);
-  padding-top: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-top: 20px;
   text-align: center;
   color: var(--text-secondary);
   font-size: 13px;
-}
-
-/* =========================================
-   6. RESPONSIVE (Для телефонов)
-   ========================================= */
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr; /* На телефоне будет 1 колонка */
-  }
-  
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-  
-  .footer-links {
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .hero h1 {
-    font-size: 40px;
-  }
 }

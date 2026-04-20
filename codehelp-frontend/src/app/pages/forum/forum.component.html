@@ -27,14 +27,30 @@
 
               <div class="form-group flex-1">
                 <label>Category</label>
-                <select class="linear-input" [(ngModel)]="selectedPostCategory">
-                  <option value="" disabled selected>Select category...</option>
-                  @for (category of categories; track category.id) {
-                    <option [value]="category.id">{{ category.name }}</option>
+                <div class="custom-dropdown-container">
+                  <div class="linear-input custom-select-box" (click)="toggleDropdown($event)" [class.active]="isDropdownOpen">
+                    <span [class.placeholder-text]="!selectedPostCategory">
+                      {{ getCategoryNameById(selectedPostCategory) || 'Select category...' }}
+                    </span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-icon" [class.rotated]="isDropdownOpen">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                  
+                  @if (isDropdownOpen) {
+                    <div class="custom-dropdown-menu">
+                      @for (category of categories; track category.id) {
+                        <div class="custom-dropdown-item" 
+                             [class.selected]="selectedPostCategory === category.id"
+                             (click)="selectDropdownCategory(category.id)">
+                          {{ category.name }}
+                        </div>
+                      }
+                    </div>
                   }
-                </select>
+                </div>
               </div>
-            </div>
+              </div>
 
             <div class="form-group">
               <label>Content</label>
@@ -75,6 +91,14 @@
                     <span class="author">@{{ post.author_username || 'Unknown' }}</span>
                     <span class="dot">•</span>
                     <span class="date">{{ post.created_at | date:'MMM d, yyyy' }}</span>
+                    
+                    <span class="dot">•</span>
+                    <span class="comments-meta">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="meta-icon">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                      </svg>
+                      {{ post.comments_count || 0 }} comments
+                    </span>
                   </div>
 
                   <div class="post-actions" (click)="$event.stopPropagation()">
@@ -152,9 +176,8 @@
                           <div class="comment-text">{{ comment.text }}</div>
                           
                           <div class="comment-side-actions">
-                            
                             @if (comment.is_edited) {
-                              <span class="edited-tag">(edited)</span>
+                              <span class="edited-tag">EDITED</span>
                             }
 
                             @if (authService.getUsername() === comment.author_username) {

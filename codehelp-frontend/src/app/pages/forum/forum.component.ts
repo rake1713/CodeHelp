@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -19,6 +19,7 @@ export class ForumComponent implements OnInit {
   commentsCount = 0;
 
   selectedPostCategory = '';
+  isDropdownOpen = false; // Состояние кастомного меню
 
   loading = false;
   errorMessage = '';
@@ -31,7 +32,6 @@ export class ForumComponent implements OnInit {
   comments: any[] = [];
   newCommentText = '';
 
-  // Переменные для редактирования
   editingCommentId: number | null = null;
   editCommentText = '';
 
@@ -50,6 +50,24 @@ export class ForumComponent implements OnInit {
   ngOnInit(): void {
     this.loadForumData();
   }
+
+  // --- ЛОГИКА КАСТОМНОГО ВЫПАДАЮЩЕГО МЕНЮ ---
+  toggleDropdown(event: Event): void {
+    event.stopPropagation(); // Чтобы клик не дошел до document и сразу не закрыл меню
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  selectDropdownCategory(categoryId: any): void {
+    this.selectedPostCategory = categoryId;
+    this.isDropdownOpen = false;
+  }
+
+  // Закрываем меню при клике в любое место экрана
+  @HostListener('document:click')
+  closeDropdown(): void {
+    this.isDropdownOpen = false;
+  }
+  // ------------------------------------------
 
   onBackClick(event: Event): void {
     event.preventDefault();
@@ -120,6 +138,7 @@ export class ForumComponent implements OnInit {
   }
 
   getCategoryNameById(categoryId: number | string): string {
+    if (!categoryId) return '';
     const found = this.categories.find((category: any) => category.id == categoryId);
     return found ? found.name : '';
   }
