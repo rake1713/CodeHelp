@@ -13,6 +13,6 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([authInterceptor])
     ),
-    provideMonacoEditor(),
+    provideMonacoEditor({ baseUrl: 'assets/monaco' }),
   ]
 };

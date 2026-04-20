@@ -7,8 +7,6 @@ __pycache__/
 *.pyd
 *.pot
 *.mo
-db.sqlite3
-*.sqlite3
 staticfiles/
 media/
 node_modules/
@@ -21,3 +19,4 @@ Thumbs.db
 .idea/
 .vscode/
 BACKEND.txt
+MONACO_EXPLANATION.txt

@@ -19,7 +19,7 @@ from .serializers import (
     CategoryModelSerializer,
     UserRegistrationSerializer
 )
-from .service import run_submission
+from .service import run_submission, run_code_with_input
 
 
 class UserRegistrationAPIView(generics.CreateAPIView):
@@ -212,6 +212,21 @@ class UserProfileView(APIView):
             'first_name': user.first_name,
             'last_name': user.last_name,
         })
+
+
+class RunCodeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        code = request.data.get('code', '')
+        language = request.data.get('language', 'python')
+        stdin = request.data.get('stdin', '')
+
+        if not code.strip():
+            return Response({'error': 'Код пустой'}, status=status.HTTP_400_BAD_REQUEST)
+
+        success, output = run_code_with_input(code, language, stdin)
+        return Response({'success': success, 'output': output})
 
 
 class LogoutView(APIView):

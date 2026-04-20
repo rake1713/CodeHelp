@@ -14,6 +14,7 @@ from .views import (
     LogoutView,
     UserProfileView,
     ProblemDetailView,
+    RunCodeView,
     search_problems,
     my_stats,
 )
@@ -36,4 +37,5 @@ urlpatterns = [
     path('problems/<int:pk>/detail/', ProblemDetailView.as_view(), name='problem-detail'),
     path('problems/search/', search_problems, name='problem-search'),
     path('stats/', my_stats, name='my-stats'),
+    path('run/', RunCodeView.as_view(), name='run-code'),
 ]

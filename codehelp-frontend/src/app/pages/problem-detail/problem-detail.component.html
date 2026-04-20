@@ -8,32 +8,26 @@
 
 @if (!loading && problem) {
   <div class="problem-page">
-    
+
     <div class="left-panel">
       <div class="tab-bar">
         <span class="active-tab">Description</span>
       </div>
 
-  <div class="problem-content">
-  <a routerLink="/problems" class="back-link">
-    <svg 
-      class="back-icon" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      stroke-width="2" 
-      stroke-linecap="round" 
-      stroke-linejoin="round">
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    <span>Back to problems</span>
-  </a>
+      <div class="problem-content">
+        <a routerLink="/problems" class="back-link">
+          <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Back to problems</span>
+        </a>
 
         <h1 class="problem-title">{{ problem.title }}</h1>
 
         <div class="tag-row">
-          <span class="tag difficulty" 
+          <span class="tag difficulty"
                 [class.easy]="problem.difficulty === 'Easy'"
                 [class.medium]="problem.difficulty === 'Medium'"
                 [class.hard]="problem.difficulty === 'Hard'">
@@ -57,44 +51,63 @@
     </div>
 
     <div class="right-panel">
-      
+
       <div class="editor-topbar">
         <select class="language-select" [(ngModel)]="selectedLanguage" (change)="onLanguageChange()">
           <option value="python">Python</option>
           <option value="cpp">C++</option>
           <option value="java">Java</option>
         </select>
-
-        <button class="reset-btn" (click)="resetCode()">
-          <span class="icon">↺</span> Reset Code
-        </button>
+        <button class="reset-btn" (click)="resetCode()">↺ Reset</button>
       </div>
 
       <div class="editor-wrapper">
-        <textarea
-          class="real-code-editor"
-          [(ngModel)]="code"
-          spellcheck="false"
-          placeholder="Write your code here...">
-        </textarea>
+        <div #editorContainer class="monaco-editor"></div>
       </div>
 
-      <div class="result-panel">
-        <div class="result-header">Console Output</div>
+      <!-- Ресайз-хендл -->
+      <div class="resize-handle" (mousedown)="startResize($event)" title="Drag to resize"></div>
+
+      <!-- Консоль -->
+      <div class="result-panel" [style.height.px]="consoleHeight">
+
+        <div class="result-header">
+          <span>Console</span>
+          <button class="toggle-input-btn" (click)="toggleInput()">
+            {{ showInput ? '▾ Hide Input' : '▸ Custom Input' }}
+          </button>
+        </div>
+
+        @if (showInput) {
+          <div class="custom-input-area">
+            <div class="input-label">Stdin</div>
+            <textarea
+              class="custom-input-textarea"
+              [(ngModel)]="customInput"
+              placeholder="Введи входные данные..."></textarea>
+          </div>
+        }
+
         <div class="result-content" [class.empty]="!outputText">
           {{ outputText || 'Run your code to see the output here...' }}
         </div>
+
       </div>
 
       <div class="bottom-actions">
         <span class="status-text">
-          <span class="status-dot" [class.sending]="submitting"></span>
-          {{ submitting ? 'Running your code...' : 'Ready to submit' }}
+          <span class="status-dot" [class.sending]="submitting || running"></span>
+          @if (submitting) { Submitting... }
+          @else if (running) { Running... }
+          @else { Ready }
         </span>
 
         <div class="button-group">
-          <button class="primary-btn" (click)="submitCode()" [disabled]="submitting">
-            {{ submitting ? 'Submitting...' : 'Submit Solution' }}
+          <button class="run-btn" (click)="runCode()" [disabled]="running || submitting">
+            {{ running ? '...' : '▶ Run' }}
+          </button>
+          <button class="primary-btn" (click)="submitCode()" [disabled]="submitting || running">
+            {{ submitting ? 'Submitting...' : 'Submit' }}
           </button>
         </div>
       </div>
