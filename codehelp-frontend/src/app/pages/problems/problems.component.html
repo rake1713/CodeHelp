@@ -44,9 +44,7 @@
           </div>
           
           <a routerLink="/my-submissions" class="btn-submissions">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
+            <span class="live-dot"></span>
             My Submissions
           </a>
         </div>
@@ -68,7 +66,7 @@
                 <th>Problem Title</th>
                 <th>Difficulty</th>
                 <th>Category</th>
-                <th>Solutions</th>
+                <th>Attempts</th>
               </tr>
             </thead>
             <tbody>
@@ -79,9 +77,15 @@
               } @else {
                 @for (problem of filteredProblems; track problem.id) {
                   <tr>
+                    
                     <td class="status-cell">
-                      <div class="circle-indicator"></div>
+                      <div class="circle-indicator"
+                           [class.solved]="problem.user_status === 'Accepted'"
+                           [class.working]="problem.user_status === 'Pending'"
+                           [class.error]="problem.user_status === 'Wrong Answer' || problem.user_status === 'Runtime Error' || problem.user_status === 'Time Limit Exceeded'">
+                      </div>
                     </td>
+
                     <td>
                       <a class="problem-link" [routerLink]="['/problems', problem.id]">
                         {{ problem.title }}
@@ -96,7 +100,9 @@
                       </span>
                     </td>
                     <td class="text-secondary">{{ problem.category_name || 'General' }}</td>
-                    <td class="text-secondary">{{ problem.submissions_count ?? '0' }}</td>
+                    
+                    <td class="text-secondary">{{ problem.submissions_count ?? '0' }} attempts</td>
+
                   </tr>
                 }
               }

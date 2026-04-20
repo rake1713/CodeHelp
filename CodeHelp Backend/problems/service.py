@@ -3,7 +3,7 @@ import tempfile
 import os
 import sys
 
-# Пытаемся импортировать resource только если мы НЕ на Windows
+
 if sys.platform != 'win32':
     import resource
 else:
@@ -42,11 +42,16 @@ def run_submission(submission):
                     file_path = os.path.join(tmpdir, "solution.py")
                     with open(file_path, 'w', encoding='utf-8') as f:
                         f.write(submission.code)
-                    run_command = ['python3', '-I', file_path]
+                    
+                    python_cmd = 'python' if sys.platform == 'win32' else 'python3'
+                    run_command = [python_cmd, '-I', file_path]
 
                 elif submission.language == 'cpp':
                     file_path = os.path.join(tmpdir, "main.cpp")
                     exe_path = os.path.join(tmpdir, "main.out")
+                    if sys.platform == 'win32':
+                        exe_path += '.exe'
+
                     with open(file_path, 'w', encoding='utf-8') as f:
                         f.write(submission.code)
 
@@ -74,16 +79,22 @@ def run_submission(submission):
                 else:
                     return "Error", f"Неизвестный язык: {submission.language}"
 
-                process = subprocess.run(
-                    run_command,
-                    input=test.input_data,
-                    text=True,
-                    capture_output=True,
-                    timeout=2,
-                    env=SAFE_ENV,
-                    close_fds=True,
-                    preexec_fn=_apply_resource_limits,
-                )
+                run_kwargs = {
+                    'input': test.input_data,
+                    'text': True,
+                    'capture_output': True,
+                    'timeout': 2,
+                    'env': SAFE_ENV,
+                    'close_fds': True,
+                }
+
+                # Добавляем preexec_fn ТОЛЬКО если сервер работает на Linux/macOS
+                if sys.platform != 'win32':
+                    run_kwargs['preexec_fn'] = _apply_resource_limits
+
+                # Распаковываем словарь через **run_kwargs
+                process = subprocess.run(run_command, **run_kwargs)
+                # ==========================================
 
                 stdout = process.stdout[:10_000]
 

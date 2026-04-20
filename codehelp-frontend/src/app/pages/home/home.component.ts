@@ -21,8 +21,16 @@ export class HomeComponent {
     }
   }
 
-  exploreLanguage(lang: string): void {
-    // Перенаправляем на Problems и сразу включаем фильтр по категории
-    this.router.navigate(['/problems'], { queryParams: { category: lang } });
+  // Перенаправление на официальные сайты языков в новой вкладке
+  openOfficialSite(lang: string): void {
+    const urls: { [key: string]: string } = {
+      'Python': 'https://www.python.org/',
+      'C++': 'https://isocpp.org/',
+      'Java': 'https://dev.java/'
+    };
+    
+    if (urls[lang]) {
+      window.open(urls[lang], '_blank');
+    }
   }
 }

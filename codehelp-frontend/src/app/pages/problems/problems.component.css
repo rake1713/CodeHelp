@@ -282,3 +282,58 @@ tr:hover td {
 .info-box { background: #f3f4f6; color: var(--text-secondary); }
 .error-box { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca;}
 .empty-cell { text-align: center; color: var(--text-secondary); padding: 60px; font-weight: 500;}
+
+/* =========================================
+   ДОПОЛНЕНИЯ: ИНДИКАТОРЫ И ПУЛЬСИРУЮЩАЯ ТОЧКА
+   ========================================= */
+
+/* Пульсирующая зеленая точка для кнопки My Submissions */
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Обновляем кнопку, чтобы точка стояла ровно */
+.btn-submissions {
+  gap: 10px; /* Расстояние между точкой и текстом */
+}
+
+/* --- КРУЖКИ СТАТУСОВ (Circle Indicators) --- */
+
+.circle-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db; /* Серый (По умолчанию - не решал) */
+  background-color: transparent;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+}
+
+/* Зеленый (Решено правильно) */
+.circle-indicator.solved {
+  border-color: #10b981;
+  background-color: #10b981;
+}
+
+/* Желтый (В процессе / Pending) */
+.circle-indicator.working {
+  border-color: #f59e0b;
+  background-color: #fcd34d;
+}
+
+/* Красный (Ошибка / Wrong Answer / Runtime Error) */
+.circle-indicator.error {
+  border-color: #ef4444;
+  background-color: #fca5a5;
+}

@@ -54,11 +54,32 @@ class CategoryModelSerializer(serializers.ModelSerializer):
 class ProblemModelSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     created_by_username = serializers.CharField(source='created_by.username', read_only=True)
+    
+    # НОВЫЕ ПОЛЯ ДЛЯ ФРОНТЕНДА
+    user_status = serializers.SerializerMethodField()
+    submissions_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Problem
-        fields = '__all__'
+        fields = '__all__' 
         read_only_fields = ['created_by', 'created_at']
+
+    def get_user_status(self, obj):
+        # Получаем пользователя из запроса
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            # Ищем последнюю отправку этого юзера для этой задачи
+            latest_submission = obj.submissions.filter(user=request.user).order_by('-created_at').first()
+            if latest_submission:
+                return latest_submission.status  # Вернет 'Accepted', 'Wrong Answer' и т.д.
+        return None  # Если не решал или не авторизован
+
+    def get_submissions_count(self, obj):
+        # Считаем количество попыток текущего юзера
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.submissions.filter(user=request.user).count()
+        return 0
 
 
 class SubmissionModelSerializer(serializers.ModelSerializer):

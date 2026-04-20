@@ -17,6 +17,23 @@ export class AuthService {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
+  tryRestoreSession(): Observable<any> | null {
+    const access = this.getAccessToken();
+    const refresh = this.getRefreshToken();
+
+    if (access) {
+      return null;
+    }
+
+    if (refresh) {
+      return this.refreshToken();
+    }
+
+    return null;
+  }
+
+
+
   // Логин
   login(data: { username: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login/`, data).pipe(
@@ -30,9 +47,7 @@ export class AuthService {
     );
   }
 
-  // Регистрация (Можешь добавить email сюда, если нужно)
-  // Было: register(data: any): Observable<any>
-  // Стало:
+  // Регистрация
   register(data: { username: string; email: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register/`, data);
   }
@@ -40,13 +55,15 @@ export class AuthService {
   // Обновление токена
   refreshToken(): Observable<any> {
     const refresh = this.getRefreshToken();
-    
-    // ВАЖНО: Если бэкенд использует другой URL для рефреша (например /login/refresh/), 
-    // поменяй 'token/refresh/' на нужный.
-    return this.http.post<any>(`${this.apiUrl}/token/refresh/`, { refresh }).pipe(
+
+    return this.http.post<any>(`${this.apiUrl}/login/refresh/`, { refresh }).pipe(
       tap((res) => {
         if (this.isBrowser && res.access) {
           localStorage.setItem('access', res.access);
+        }
+
+        if (this.isBrowser && res.refresh) {
+          localStorage.setItem('refresh', res.refresh);
         }
       })
     );
