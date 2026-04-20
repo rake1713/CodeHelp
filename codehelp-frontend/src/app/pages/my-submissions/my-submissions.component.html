@@ -84,8 +84,9 @@
                 </div>
               </div>
 
-              @if (expandedSubmissionId === sub.id) {
+             <div class="submission-details-wrapper" [class.open]="expandedSubmissionId === sub.id">
                 <div class="submission-details">
+                  
                   <div class="detail-section">
                     <h4 class="detail-title">Output / Error Details</h4>
                     <pre class="console-output" [class.success-text]="sub.status === 'Accepted'">{{ sub.status_details || 'No details available.' }}</pre>
@@ -95,8 +96,9 @@
                     <h4 class="detail-title">Submitted Code</h4>
                     <pre class="code-preview"><code>{{ sub.code }}</code></pre>
                   </div>
+
                 </div>
-              }
+              </div>
             </div>
           }
 

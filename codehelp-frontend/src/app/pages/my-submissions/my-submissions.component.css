@@ -147,14 +147,46 @@
 .chevron.rotated { transform: rotate(180deg); color: var(--text-primary); }
 
 /* ДЕТАЛИ */
-.submission-details { border-top: 1px solid var(--border-color); padding: 24px; background: #fdfdfd; }
+/* =========================================
+   ДЕТАЛИ (ПЛАВНОЕ РАСКРЫТИЕ)
+   ========================================= */
+
+/* Специальная обертка для плавной анимации высоты */
+.submission-details-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease-out; /* Плавность 0.3 секунды */
+  overflow: hidden;
+}
+
+/* Когда блок открыт, высота становится автоматической (1fr) */
+.submission-details-wrapper.open {
+  grid-template-rows: 1fr;
+}
+
+/* Внутренний контейнер деталей */
+.submission-details {
+  min-height: 0; /* Обязательно для работы grid-анимации */
+  border-top: 1px solid transparent;
+  padding: 0 24px; /* Убираем отступы сверху/снизу пока закрыто */
+  background: #fdfdfd;
+  opacity: 0; /* Делаем прозрачным пока закрыто */
+  transition: all 0.3s ease-out;
+}
+
+/* Стили, когда блок полностью открыт */
+.submission-details-wrapper.open .submission-details {
+  border-top-color: var(--border-color);
+  padding: 24px;
+  opacity: 1; /* Проявляем текст */
+}
+
 .detail-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
 
 .console-output { background: #111827; color: #fca5a5; padding: 16px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 13px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; overflow-x: auto; }
 .console-output.success-text { color: #34d399; }
 
 .code-preview { background: var(--bg-color); border: 1px solid var(--border-color); padding: 16px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 13px; color: var(--text-primary); overflow-x: auto; line-height: 1.5; }
-
 .info-box { padding: 20px; background: #f3f4f6; border-radius: 8px; text-align: center; color: var(--text-secondary); font-weight: 500;}
 .empty-state { padding: 40px; text-align: center; border: 1px dashed var(--border-color); border-radius: 12px; color: var(--text-secondary); font-size: 15px;}
 .mt-3 { margin-top: 24px; }

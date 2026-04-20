@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ProblemService } from '../../services/problem.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-problems',
@@ -22,28 +23,48 @@ export class ProblemsComponent implements OnInit {
   selectedCategory = '';
   searchText = '';
 
-  categories: string[] = [
-    'Algorithms',
-    'Array',
-    'Basics',
-    'Conditions',
-    'Loops',
-    'Arrays',
-    'Strings',
-    'Functions',
-    'Recursion',
-    'Sorting',
-    'Data Structures',
-    'Geometry'
-  ];
+  categories: string[] = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private problemService: ProblemService
+    private problemService: ProblemService,
+    private route: ActivatedRoute
+    
   ) {}
 
   ngOnInit(): void {
     this.loadProblems();
+    this.loadCategories();
+
+    // Слушаем параметры из URL (с главной страницы)
+    this.route.queryParams.subscribe(params => {
+      let shouldFilter = false;
+      
+      if (params['q']) {
+        this.searchText = params['q'];
+        shouldFilter = true;
+      }
+      
+      if (params['category']) {
+        this.selectedCategory = params['category'];
+        shouldFilter = true;
+      }
+
+      if (shouldFilter) {
+        // Даем Angular миллисекунду на загрузку данных, затем фильтруем
+        setTimeout(() => this.applyFilters(), 100);
+      }
+    });
+  }
+  loadCategories(): void {
+    this.problemService.getCategories().subscribe({
+      next: (data: any) => {
+        const list = Array.isArray(data) ? data : (data.results || []);
+        this.categories = list.map((c: any) => c.name);
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Categories load error:', err)
+    });
   }
 
   loadProblems(): void {
@@ -95,4 +116,7 @@ export class ProblemsComponent implements OnInit {
 
       return matchesDifficulty && matchesCategory && matchesSearch;
     });
-s.cdr.detectChanges();
+
+    this.cdr.detectChanges();
+  }
+}
