@@ -10,7 +10,7 @@ Sulubekov Dias (https://github.com/DisDinZy)
 Kalmurat Nurzhan (https://github.com/nurzhan2)
 
 💻 About the Project (Features):
-Categories: Questions are organized by programming languages (Python, C++, Java, JS, etc.).
+Categories: Questions are organized by programming languages (Python, C++, Java).
 
 Tickets (Questions): Students can create a question, describe the problem, and attach code snippets.
 
