@@ -70,8 +70,11 @@ export class MySubmissionsComponent implements OnInit {
     });
   }
 
-  // --- ЛОГИКА РЕШЕНИЙ ---
+// --- ЛОГИКА РЕШЕНИЙ ---
   toggleSubmission(id: number): void {
     this.expandedSubmissionId = this.expandedSubmissionId === id ? null : id;
+    
+    // ЭТА СТРОЧКА ЗАСТАВИТ ЭКРАН ОБНОВЛЯТЬСЯ МГНОВЕННО:
+    this.cdr.detectChanges(); 
   }
 }
