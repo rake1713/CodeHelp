@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 
 @Injectable({
@@ -12,14 +12,6 @@ export class ForumService {
 
   constructor(private http: HttpClient) {}
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('access');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: token ? `Bearer ${token}` : ''
-    });
-  }
-
   getForumData() {
     return forkJoin({
       posts: this.http.get<any>(this.postsUrl),
@@ -29,11 +21,11 @@ export class ForumService {
   }
 
   createPost(data: { title: string; content: string; category: string | number }): Observable<any> {
-    return this.http.post(this.postsUrl, data, { headers: this.getAuthHeaders() });
+    return this.http.post(this.postsUrl, data);
   }
 
   likePost(postId: number): Observable<any> {
-    return this.http.post(`${this.postsUrl}${postId}/like/`, {}, { headers: this.getAuthHeaders() });
+    return this.http.post(`${this.postsUrl}${postId}/like/`, {});
   }
 
   getCommentsByPost(postId: number): Observable<any> {
@@ -41,14 +33,14 @@ export class ForumService {
   }
 
   createComment(data: { post: number; text: string }): Observable<any> {
-    return this.http.post(this.commentsUrl, data, { headers: this.getAuthHeaders() });
+    return this.http.post(this.commentsUrl, data);
   }
 
   updateComment(commentId: number, data: { text: string }): Observable<any> {
-    return this.http.patch(`${this.commentsUrl}${commentId}/`, data, { headers: this.getAuthHeaders() });
+    return this.http.patch(`${this.commentsUrl}${commentId}/`, data);
   }
 
   deleteComment(commentId: number): Observable<any> {
-    return this.http.delete(`${this.commentsUrl}${commentId}/`, { headers: this.getAuthHeaders() });
+    return this.http.delete(`${this.commentsUrl}${commentId}/`);
   }
 }

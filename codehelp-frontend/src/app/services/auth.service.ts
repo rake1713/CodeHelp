@@ -17,10 +17,6 @@ export class AuthService {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  // ==========================================
-  // НОВЫЕ МЕТОДЫ (Исправленные)
-  // ==========================================
-  
   getAuthHeaders(): HttpHeaders {
     const token = this.getAccessToken();
     return new HttpHeaders({
@@ -30,16 +26,12 @@ export class AuthService {
   }
 
   getProfile(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/profile/`, { headers: this.getAuthHeaders() });
+    return this.http.get(`${this.apiUrl}/profile/`);
   }
 
   updateProfile(data: { first_name: string; last_name: string }): Observable<any> {
-    return this.http.put(`${this.apiUrl}/profile/`, data, { headers: this.getAuthHeaders() });
+    return this.http.put(`${this.apiUrl}/profile/`, data);
   }
-
-  // ==========================================
-  // СТАРЫЕ МЕТОДЫ (Остаются без изменений)
-  // ==========================================
 
   tryRestoreSession(): Observable<any> | null {
     const access = this.getAccessToken();
@@ -56,7 +48,6 @@ export class AuthService {
     return null;
   }
 
-  // Логин
   login(data: { username: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login/`, data).pipe(
       tap((res) => {
@@ -69,12 +60,10 @@ export class AuthService {
     );
   }
 
-  // Регистрация
   register(data: { username: string; email: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register/`, data);
   }
 
-  // Обновление токена
   refreshToken(): Observable<any> {
     const refresh = this.getRefreshToken();
 

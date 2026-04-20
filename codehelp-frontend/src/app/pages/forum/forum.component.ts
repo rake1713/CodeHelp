@@ -51,9 +51,8 @@ export class ForumComponent implements OnInit {
     this.loadForumData();
   }
 
-  // --- ЛОГИКА КАСТОМНОГО ВЫПАДАЮЩЕГО МЕНЮ ---
   toggleDropdown(event: Event): void {
-    event.stopPropagation(); // Чтобы клик не дошел до document и сразу не закрыл меню
+    event.stopPropagation();
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
@@ -62,12 +61,10 @@ export class ForumComponent implements OnInit {
     this.isDropdownOpen = false;
   }
 
-  // Закрываем меню при клике в любое место экрана
   @HostListener('document:click')
   closeDropdown(): void {
     this.isDropdownOpen = false;
   }
-  // ------------------------------------------
 
   onBackClick(event: Event): void {
     event.preventDefault();
@@ -139,7 +136,7 @@ export class ForumComponent implements OnInit {
 
   getCategoryNameById(categoryId: number | string): string {
     if (!categoryId) return '';
-    const found = this.categories.find((category: any) => category.id == categoryId);
+    const found = this.categories.find((category: any) => category.id === categoryId);
     return found ? found.name : '';
   }
 
