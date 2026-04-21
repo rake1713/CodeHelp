@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -9,14 +9,6 @@ export class ProblemService {
   private apiUrl = 'http://127.0.0.1:8000/api/';
 
   constructor(private http: HttpClient) {}
-
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('access');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: token ? `Bearer ${token}` : ''
-    });
-  }
 
   getProblems(): Observable<any> {
     return this.http.get(`${this.apiUrl}problems/`);
@@ -31,6 +23,6 @@ export class ProblemService {
   }
 
   getMyStats(): Observable<any> {
-    return this.http.get(`${this.apiUrl}stats/`, { headers: this.getAuthHeaders() });
+    return this.http.get(`${this.apiUrl}stats/`);
   }
 }

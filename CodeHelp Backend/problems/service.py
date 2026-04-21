@@ -7,7 +7,7 @@ if sys.platform != 'win32':
     import resource
 else:
     resource = None
-    
+
 MAX_CODE_SIZE_BYTES = 64 * 1024
 
 SAFE_ENV = {
@@ -24,59 +24,59 @@ def _apply_resource_limits():
         os.setpgrp()
 
 
+def _prepare_run_command(code, language, tmpdir):
+    if language == 'python':
+        file_path = os.path.join(tmpdir, 'solution.py')
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(code)
+        python_cmd = 'python' if sys.platform == 'win32' else 'python3'
+        return [python_cmd, '-I', file_path], None
+
+    if language == 'cpp':
+        file_path = os.path.join(tmpdir, 'main.cpp')
+        exe_path = os.path.join(tmpdir, 'main.out')
+        if sys.platform == 'win32':
+            exe_path += '.exe'
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(code)
+        result = subprocess.run(
+            ['g++', '-O2', '-o', exe_path, file_path],
+            capture_output=True, text=True, timeout=10
+        )
+        if result.returncode != 0:
+            return None, f"Ошибка компиляции C++:\n{result.stderr[:500]}"
+        return [exe_path], None
+
+    if language == 'java':
+        file_path = os.path.join(tmpdir, 'Main.java')
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(code)
+        result = subprocess.run(
+            ['javac', file_path],
+            capture_output=True, text=True, timeout=15
+        )
+        if result.returncode != 0:
+            return None, f"Ошибка компиляции Java:\n{result.stderr[:500]}"
+        return ['java', '-cp', tmpdir, 'Main'], None
+
+    return None, f"Неизвестный язык: {language}"
+
+
 def run_submission(submission):
     if len(submission.code.encode('utf-8')) > MAX_CODE_SIZE_BYTES:
-        return "Error", f"Код слишком большой. Максимум {MAX_CODE_SIZE_BYTES // 1024} KB."
+        return "Runtime Error", f"Код слишком большой. Максимум {MAX_CODE_SIZE_BYTES // 1024} KB."
 
-    problem = submission.problem
-    test_cases = problem.test_cases.all()
-
+    test_cases = submission.problem.test_cases.all()
     if not test_cases:
         return "Runtime Error", "Админ ещё не добавил тесты для этой задачи."
 
     for index, test in enumerate(test_cases, 1):
         try:
             with tempfile.TemporaryDirectory() as tmpdir:
-                if submission.language == 'python':
-                    file_path = os.path.join(tmpdir, "solution.py")
-                    with open(file_path, 'w', encoding='utf-8') as f:
-                        f.write(submission.code)
-                    
-                    python_cmd = 'python' if sys.platform == 'win32' else 'python3'
-                    run_command = [python_cmd, '-I', file_path]
+                run_command, error = _prepare_run_command(submission.code, submission.language, tmpdir)
+                if error:
+                    return "Runtime Error", error
 
-                elif submission.language == 'cpp':
-                    file_path = os.path.join(tmpdir, "main.cpp")
-                    exe_path = os.path.join(tmpdir, "main.out")
-                    if sys.platform == 'win32':
-                        exe_path += '.exe'
-                        
-                    with open(file_path, 'w', encoding='utf-8') as f:
-                        f.write(submission.code)
-
-                    compile_res = subprocess.run(
-                        ['g++', '-O2', '-o', exe_path, file_path],
-                        capture_output=True, text=True, timeout=10
-                    )
-                    if compile_res.returncode != 0:
-                        return "Runtime Error", f"Ошибка компиляции C++:\n{compile_res.stderr[:500]}"
-                    run_command = [exe_path]
-
-                elif submission.language == 'java':
-                    file_path = os.path.join(tmpdir, "Main.java")
-                    with open(file_path, 'w', encoding='utf-8') as f:
-                        f.write(submission.code)
-
-                    compile_res = subprocess.run(
-                        ['javac', file_path],
-                        capture_output=True, text=True, timeout=15
-                    )
-                    if compile_res.returncode != 0:
-                        return "Runtime Error", f"Ошибка компиляции Java:\n{compile_res.stderr[:500]}"
-                    run_command = ['java', '-cp', tmpdir, 'Main']
-
-                else:
-                    return "Runtime Error", f"Неизвестный язык: {submission.language}"
                 run_kwargs = {
                     'input': test.input_data,
                     'text': True,
@@ -85,26 +85,21 @@ def run_submission(submission):
                     'env': SAFE_ENV,
                     'close_fds': True,
                 }
-
                 if sys.platform != 'win32':
                     run_kwargs['preexec_fn'] = _apply_resource_limits
 
                 process = subprocess.run(run_command, **run_kwargs)
-                stdout = process.stdout[:10_000]
 
                 if process.returncode != 0:
-                    stderr_preview = process.stderr[:300]
-                    return "Runtime Error", f"Ошибка выполнения на тесте #{index}:\n{stderr_preview}"
+                    return "Runtime Error", f"Ошибка выполнения на тесте #{index}:\n{process.stderr[:300]}"
 
-                user_output = stdout.strip()
-                expected_output = test.expected_output.strip()
-
-                if user_output != expected_output:
+                if process.stdout[:10_000].strip() != test.expected_output.strip():
                     return (
                         "Wrong Answer",
                         f"Тест #{index} не пройден.\n"
-                        f"Ожидалось: '{expected_output}'\n"
-                        f"Получено:  '{user_output}'"
+                        f"Входные данные: {test.input_data.strip()}\n"
+                        f"Ожидалось: {test.expected_output.strip()}\n"
+                        f"Получено:  {process.stdout[:10_000].strip()}'"
                     )
 
         except subprocess.TimeoutExpired:
@@ -121,46 +116,10 @@ def run_code_with_input(code, language, stdin):
 
     try:
         with tempfile.TemporaryDirectory() as tmpdir:
-            if language == 'python':
-                file_path = os.path.join(tmpdir, "solution.py")
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    f.write(code)
-                    
-                python_cmd = 'python' if sys.platform == 'win32' else 'python3'
-                run_command = [python_cmd, '-I', file_path]
+            run_command, error = _prepare_run_command(code, language, tmpdir)
+            if error:
+                return False, error
 
-            elif language == 'cpp':
-                file_path = os.path.join(tmpdir, "main.cpp")
-                exe_path = os.path.join(tmpdir, "main.out")
-                if sys.platform == 'win32':
-                    exe_path += '.exe'
-                    
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    f.write(code)
-                    
-                compile_res = subprocess.run(
-                    ['g++', '-O2', '-o', exe_path, file_path],
-                    capture_output=True, text=True, timeout=10
-                )
-                if compile_res.returncode != 0:
-                    return False, f"Ошибка компиляции:\n{compile_res.stderr[:500]}"
-                run_command = [exe_path]
-
-            elif language == 'java':
-                file_path = os.path.join(tmpdir, "Main.java")
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    f.write(code)
-                    
-                compile_res = subprocess.run(
-                    ['javac', file_path],
-                    capture_output=True, text=True, timeout=15
-                )
-                if compile_res.returncode != 0:
-                    return False, f"Ошибка компиляции:\n{compile_res.stderr[:500]}"
-                run_command = ['java', '-cp', tmpdir, 'Main']
-
-            else:
-                return False, f"Неизвестный язык: {language}"
             run_kwargs = {
                 'input': stdin or '',
                 'text': True,
@@ -169,9 +128,9 @@ def run_code_with_input(code, language, stdin):
                 'env': SAFE_ENV,
                 'close_fds': True,
             }
-
             if sys.platform != 'win32':
                 run_kwargs['preexec_fn'] = _apply_resource_limits
+
             process = subprocess.run(run_command, **run_kwargs)
             if process.returncode != 0:
                 return False, process.stderr[:500] or "Runtime Error"
