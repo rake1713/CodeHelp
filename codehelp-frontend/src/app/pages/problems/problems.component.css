@@ -1,6 +1,3 @@
-/* =========================================
-   1. HEADER & LAYOUT
-   ========================================= */
 .page-container {
   padding-bottom: 60px;
 }
@@ -29,9 +26,6 @@
   align-items: start;
 }
 
-/* =========================================
-   2. SIDEBAR (Categories/Topics)
-   ========================================= */
 .categories-title {
   font-size: 12px;
   text-transform: uppercase;
@@ -41,7 +35,6 @@
   font-weight: 700;
 }
 
-/* ПЛАВНАЯ АНИМАЦИЯ (0.4s) ДЛЯ TOPICS */
 .category-item {
   padding: 8px 12px;
   margin-left: -12px;
@@ -68,9 +61,6 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
 
-/* =========================================
-   3. TOP CONTROLS (Filters & Search)
-   ========================================= */
 .top-controls {
   display: flex;
   justify-content: space-between;
@@ -81,7 +71,6 @@
 .left-controls { display: flex; gap: 16px; }
 .filters { display: flex; gap: 8px; }
 
-/* ПЛАВНАЯ АНИМАЦИЯ (0.4s) ДЛЯ ФИЛЬТРОВ СЛОЖНОСТИ */
 .filter-chip {
   height: 34px;
   padding: 0 16px;
@@ -112,7 +101,6 @@
   align-items: center;
 }
 
-/* Обертка для поля поиска */
 .search-wrapper {
   position: relative;
   display: flex;
@@ -130,7 +118,7 @@
 .search-box {
   height: 36px;
   width: 260px;
-  padding: 0 16px 0 36px; /* Отступ слева для иконки */
+  padding: 0 16px 0 36px; 
   font-size: 14px;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
@@ -179,9 +167,6 @@
   color: var(--text-secondary);
 }
 
-/* =========================================
-   4. TABLE (Linear Style)
-   ========================================= */
 .table-wrap {
   background: var(--surface-color);
   border: 1px solid var(--border-color);
@@ -211,7 +196,7 @@ th {
 }
 
 .th-status {
-  width: 60px; /* Узкая колонка для кружка статуса */
+  width: 60px;
   text-align: center;
 }
 
@@ -224,7 +209,6 @@ td {
 
 tr:last-child td { border-bottom: none; }
 
-/* Мягкий эффект при наведении на всю строку таблицы */
 tr:hover td { 
   background: rgba(0,0,0,0.015); 
 }
@@ -249,7 +233,6 @@ tr:hover td {
   font-weight: 500;
 }
 
-/* Badges */
 .difficulty-badge {
   display: inline-block;
   padding: 4px 10px;
@@ -262,17 +245,15 @@ tr:hover td {
 .difficulty-badge.medium { background: #fffbeb; color: #f59e0b; }
 .difficulty-badge.hard { background: #fef2f2; color: #ef4444; }
 
-/* Кружок статуса решения */
 .circle-indicator {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid #d1d5db; /* Серый (Не решено) */
+  border: 2px solid #d1d5db; 
   margin: 0 auto;
   transition: all 0.3s ease;
 }
 
-/* Добавь этот класс в HTML, если задача решена */
 .circle-indicator.solved {
   border-color: #10b981;
   background-color: #10b981;
@@ -283,11 +264,6 @@ tr:hover td {
 .error-box { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca;}
 .empty-cell { text-align: center; color: var(--text-secondary); padding: 60px; font-weight: 500;}
 
-/* =========================================
-   ДОПОЛНЕНИЯ: ИНДИКАТОРЫ И ПУЛЬСИРУЮЩАЯ ТОЧКА
-   ========================================= */
-
-/* Пульсирующая зеленая точка для кнопки My Submissions */
 .live-dot {
   width: 8px;
   height: 8px;
@@ -303,36 +279,31 @@ tr:hover td {
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
-/* Обновляем кнопку, чтобы точка стояла ровно */
 .btn-submissions {
-  gap: 10px; /* Расстояние между точкой и текстом */
+  gap: 10px; 
 }
 
-/* --- КРУЖКИ СТАТУСОВ (Circle Indicators) --- */
 
 .circle-indicator {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid #d1d5db; /* Серый (По умолчанию - не решал) */
+  border: 2px solid #d1d5db;
   background-color: transparent;
   margin: 0 auto;
   transition: all 0.3s ease;
 }
 
-/* Зеленый (Решено правильно) */
 .circle-indicator.solved {
   border-color: #10b981;
   background-color: #10b981;
 }
 
-/* Желтый (В процессе / Pending) */
 .circle-indicator.working {
   border-color: #f59e0b;
   background-color: #fcd34d;
 }
 
-/* Красный (Ошибка / Wrong Answer / Runtime Error) */
 .circle-indicator.error {
   border-color: #ef4444;
   background-color: #fca5a5;

@@ -8,7 +8,6 @@ SEED_DATA = [
         "name": "Arrays",
         "description": "Tasks on working with arrays and lists",
         "problems": [
-            # Easy x2
             {
                 "title": "Two Sum",
                 "difficulty": "Easy",
@@ -40,7 +39,6 @@ SEED_DATA = [
                     {"input": "5 4 -1 7 8", "output": "23", "hidden": False},
                 ],
             },
-            # Medium x2
             {
                 "title": "Product of Array Except Self",
                 "difficulty": "Medium",
@@ -72,7 +70,6 @@ SEED_DATA = [
                     {"input": "1", "output": "", "hidden": False},
                 ],
             },
-            # Hard x2
             {
                 "title": "Median of Two Sorted Arrays",
                 "difficulty": "Hard",
@@ -108,7 +105,6 @@ SEED_DATA = [
         "name": "Strings",
         "description": "Tasks on string manipulation and pattern matching",
         "problems": [
-            # Easy x2
             {
                 "title": "Valid Palindrome",
                 "difficulty": "Easy",
@@ -140,7 +136,6 @@ SEED_DATA = [
                     {"input": "  hello world  ", "output": "world hello"},
                 ],
             },
-            # Medium x2
             {
                 "title": "Longest Substring Without Repeating Characters",
                 "difficulty": "Medium",
@@ -171,7 +166,6 @@ SEED_DATA = [
                     {"input": "", "output": ""},
                 ],
             },
-            # Hard x2
             {
                 "title": "Regular Expression Matching",
                 "difficulty": "Hard",
@@ -212,7 +206,6 @@ SEED_DATA = [
         "name": "Sorting & Searching",
         "description": "Tasks on sorting algorithms and binary search",
         "problems": [
-            # Easy x2
             {
                 "title": "Binary Search",
                 "difficulty": "Easy",
@@ -244,7 +237,6 @@ SEED_DATA = [
                     {"input": "1\n1\n\n0", "output": "1"},
                 ],
             },
-            # Medium x2
             {
                 "title": "Search in Rotated Sorted Array",
                 "difficulty": "Medium",
@@ -277,7 +269,6 @@ SEED_DATA = [
                     {"input": "3 2 3 1 2 4 5 5 6\n4", "output": "4"},
                 ],
             },
-            # Hard x2
             {
                 "title": "Count of Smaller Numbers After Self",
                 "difficulty": "Hard",
@@ -315,7 +306,6 @@ SEED_DATA = [
         "name": "Dynamic Programming",
         "description": "Tasks on dynamic programming and memoization",
         "problems": [
-            # Easy x2
             {
                 "title": "Climbing Stairs",
                 "difficulty": "Easy",
@@ -349,7 +339,6 @@ SEED_DATA = [
                     {"input": "2 7 9 3 1", "output": "12"},
                 ],
             },
-            # Medium x2
             {
                 "title": "Coin Change",
                 "difficulty": "Medium",
@@ -381,7 +370,6 @@ SEED_DATA = [
                     {"input": "7 7 7 7 7", "output": "1"},
                 ],
             },
-            # Hard x2
             {
                 "title": "Edit Distance",
                 "difficulty": "Hard",
@@ -423,7 +411,6 @@ SEED_DATA = [
         "name": "Trees & Graphs",
         "description": "Tasks on tree traversal, graph algorithms, and BFS/DFS",
         "problems": [
-            # Easy x2
             {
                 "title": "Maximum Depth of Binary Tree",
                 "difficulty": "Easy",
@@ -455,7 +442,6 @@ SEED_DATA = [
                     {"input": "1 2 2 null 3 null 3", "output": "false"},
                 ],
             },
-            # Medium x2
             {
                 "title": "Number of Islands",
                 "difficulty": "Medium",
@@ -488,7 +474,6 @@ SEED_DATA = [
                     {"input": "1", "output": "1"},
                 ],
             },
-            # Hard x2
             {
                 "title": "Serialize and Deserialize Binary Tree",
                 "difficulty": "Hard",
@@ -528,7 +513,6 @@ SEED_DATA = [
         "name": "Linked Lists",
         "description": "Tasks on linked list manipulation and traversal",
         "problems": [
-            # Easy x2
             {
                 "title": "Reverse Linked List",
                 "difficulty": "Easy",
@@ -561,7 +545,6 @@ SEED_DATA = [
                     {"input": "\n0", "output": "0"},
                 ],
             },
-            # Medium x2
             {
                 "title": "Add Two Numbers",
                 "difficulty": "Medium",
@@ -594,7 +577,6 @@ SEED_DATA = [
                     {"input": "1\n-1", "output": "-1"},
                 ],
             },
-            # Hard x2
             {
                 "title": "Reverse Nodes in k-Group",
                 "difficulty": "Hard",
