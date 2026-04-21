@@ -20,4 +20,5 @@ Thumbs.db
 .vscode/
 BACKEND.txt
 MONACO_EXPLANATION.txt
+ОБЪЯСНЕНИЕ_БЭКЕНДА.txt
 db.sqlite3
