@@ -97,8 +97,9 @@ def run_submission(submission):
                     return (
                         "Wrong Answer",
                         f"Тест #{index} не пройден.\n"
-                        f"Ожидалось: '{test.expected_output.strip()}'\n"
-                        f"Получено:  '{process.stdout[:10_000].strip()}'"
+                        f"Входные данные: {test.input_data.strip()}\n"
+                        f"Ожидалось: {test.expected_output.strip()}\n"
+                        f"Получено:  {process.stdout[:10_000].strip()}'"
                     )
 
         except subprocess.TimeoutExpired:
