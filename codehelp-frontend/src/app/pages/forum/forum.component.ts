@@ -19,7 +19,7 @@ export class ForumComponent implements OnInit {
   commentsCount = 0;
 
   selectedPostCategory = '';
-  isDropdownOpen = false; // Состояние кастомного меню
+  isDropdownOpen = false;
 
   loading = false;
   errorMessage = '';

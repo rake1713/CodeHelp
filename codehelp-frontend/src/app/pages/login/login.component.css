@@ -1,6 +1,3 @@
-/* =========================================
-   АВТОРИЗАЦИЯ (LINEAR STYLE)
-   ========================================= */
 .auth-page {
   min-height: calc(100vh - 60px);
   display: flex;
@@ -74,7 +71,7 @@
   color: var(--text-primary);
   transition: all 0.2s;
   font-family: inherit;
-  box-sizing: border-box; /* Чтобы инпуты не вылезали за края */
+  box-sizing: border-box;
 }
 
 .linear-input:focus {
@@ -84,7 +81,7 @@
 }
 
 .primary-btn {
-  width: 100%; /* Возвращаем кнопку на всю ширину */
+  width: 100%;
   background: var(--text-primary);
   color: white;
   border: none;

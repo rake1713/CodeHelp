@@ -16,12 +16,10 @@ export class HomeComponent {
 
   onSearch(): void {
     if (this.searchQuery.trim()) {
-      // Перенаправляем на Problems и передаем параметр поиска в URL
       this.router.navigate(['/problems'], { queryParams: { q: this.searchQuery.trim() } });
     }
   }
 
-  // Перенаправление на официальные сайты языков в новой вкладке
   openOfficialSite(lang: string): void {
     const urls: { [key: string]: string } = {
       'Python': 'https://www.python.org/',

@@ -13,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class RegisterComponent {
   username = '';
-  email = ''; // <-- НОВОЕ ПОЛЕ
+  email = ''; 
   password = '';
   confirmPassword = '';
   error = '';
@@ -36,7 +36,6 @@ export class RegisterComponent {
 
     this.loading = true;
     
-    // Передаем email вместе с остальными данными
     this.authService.register({
       username: this.username,
       email: this.email,
@@ -44,12 +43,10 @@ export class RegisterComponent {
     }).subscribe({
       next: () => {
         this.loading = false;
-        // После успешной регистрации сразу перекидываем на логин
         this.router.navigate(['/login']);
       },
       error: (err) => {
         this.loading = false;
-        // Пытаемся вытащить понятную ошибку от бэкенда (Django обычно присылает их так)
         this.error = err.error?.email?.[0] || 
                      err.error?.username?.[0] || 
                      err.error?.password?.[0] || 

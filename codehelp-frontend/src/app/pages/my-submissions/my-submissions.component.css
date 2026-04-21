@@ -1,11 +1,5 @@
-/* =========================================
-   LAYOUT
-   ========================================= */
 .page-container { padding-bottom: 60px; max-width: 1000px; margin: 0 auto; }
 
-/* =========================================
-   TOP: ПРОФИЛЬ И СТАТИСТИКА
-   ========================================= */
 .dashboard-top {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -15,11 +9,11 @@
 
 .profile-card {
   display: flex;
-  flex-direction: row;     /* Возвращаем элементы в строку (слева направо) */
-  align-items: center;     /* Ставим текст ровно по вертикальному центру аватара */
+  flex-direction: row;     
+  align-items: center;     
   justify-content: flex-start;
-  text-align: left;        /* Текст выровнен по левому краю */
-  gap: 24px;               /* Расстояние между аватаром и текстом */
+  text-align: left;        
+  gap: 24px;               
   background: var(--surface-color);
   border: 1px solid var(--border-color);
   border-radius: 16px;
@@ -40,11 +34,11 @@
   font-weight: 800;
   color: var(--text-primary);
   flex-shrink: 0;
-  margin-bottom: 0; /* Убрали отступ снизу, так как элементы теперь в ряд */
+  margin-bottom: 0;
 }
 
 .profile-info {
-  flex: 1; /* Текст занимает всё оставшееся место справа */
+  flex: 1; 
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -74,7 +68,6 @@
 }
 
 
-/* Статистика */
 .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .stat-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; text-align: center; display: flex; flex-direction: column; justify-content: center;}
 .stat-card:last-child { grid-column: span 2; } /* Растягиваем последнюю карточку */
@@ -82,9 +75,6 @@
 .stat-value { font-size: 32px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; line-height: 1;}
 .stat-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); }
 
-/* =========================================
-   MIDDLE: РАЗДЕЛИТЕЛЬ СО СТРЕЛКОЙ
-   ========================================= */
 .section-divider {
   display: flex;
   align-items: center;
@@ -113,9 +103,6 @@
 
 .divider-icon svg { width: 16px; height: 16px; }
 
-/* =========================================
-   BOTTOM: ИСТОРИЯ РЕШЕНИЙ
-   ========================================= */
 .section-title { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 24px; color: var(--text-primary); }
 
 .submissions-list { display: flex; flex-direction: column; gap: 12px; }
@@ -146,39 +133,32 @@
 .chevron { width: 18px; height: 18px; color: var(--text-secondary); transition: transform 0.3s ease; }
 .chevron.rotated { transform: rotate(180deg); color: var(--text-primary); }
 
-/* ДЕТАЛИ */
-/* =========================================
-   ДЕТАЛИ (ПЛАВНОЕ РАСКРЫТИЕ)
-   ========================================= */
-
-/* Специальная обертка для плавной анимации высоты */
 .submission-details-wrapper {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.3s ease-out; /* Плавность 0.3 секунды */
+  transition: grid-template-rows 0.3s ease-out;
   overflow: hidden;
 }
 
-/* Когда блок открыт, высота становится автоматической (1fr) */
+
 .submission-details-wrapper.open {
   grid-template-rows: 1fr;
 }
 
-/* Внутренний контейнер деталей */
+
 .submission-details {
-  min-height: 0; /* Обязательно для работы grid-анимации */
+  min-height: 0;
   border-top: 1px solid transparent;
-  padding: 0 24px; /* Убираем отступы сверху/снизу пока закрыто */
+  padding: 0 24px;
   background: #fdfdfd;
-  opacity: 0; /* Делаем прозрачным пока закрыто */
+  opacity: 0;
   transition: all 0.3s ease-out;
 }
 
-/* Стили, когда блок полностью открыт */
 .submission-details-wrapper.open .submission-details {
   border-top-color: var(--border-color);
   padding: 24px;
-  opacity: 1; /* Проявляем текст */
+  opacity: 1;
 }
 
 .detail-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
@@ -191,7 +171,6 @@
 .empty-state { padding: 40px; text-align: center; border: 1px dashed var(--border-color); border-radius: 12px; color: var(--text-secondary); font-size: 15px;}
 .mt-3 { margin-top: 24px; }
 
-/* АДАПТИВ */
 @media (max-width: 900px) {
   .dashboard-top { grid-template-columns: 1fr; }
   .stat-card:last-child { grid-column: auto; }
